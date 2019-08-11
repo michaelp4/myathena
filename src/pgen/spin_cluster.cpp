@@ -33,7 +33,7 @@
 
 void MeshBlock::ProblemGenerator(ParameterInput *pin) {
   // Setting the Gravitational constant
-  G = 0.00430091; // Units: pc (parsec) / solar mass * (km/s)^2
+  Real G = 0.00430091; // Units: pc (parsec) / solar mass * (km/s)^2
 
   Real tot_mass = pin->GetOrAddReal("problem","tot_mass",pow(10.0,15.0));
   Real scale_length = pin->GetOrAddReal("problem","scale_length",676);
@@ -73,15 +73,16 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin) {
   for (int k=ks; k<=ke; k++) {
   for (int j=js; j<=je; j++) {
   for (int i=is; i<=ie; i++) {
+    Real rad = 0;
     if (COORDINATE_SYSTEM == "cartesian") {
       Real x = pcoord->x1v(i);
       Real y = pcoord->x2v(j);
       Real z = pcoord->x3v(k);
+      rad = std::sqrt(SQR(x - x0) + SQR(y - y0) + SQR(z - z0));
     }
-    Real rad = std::sqrt(SQR(x - x0) + SQR(y - y0) + SQR(z - z0));
 
     // Using the function from Hernquist 1990 for mass density and eq of state
-    Real den = tot_mass/(2*M_PI)*scale_length/rad*1/pow(rad+scale_length,3.0);
+    Real den = tot_mass/(2*PI)*scale_length/rad*1/pow(rad+scale_length,3.0);
     phydro->u(IDN,k,j,i) = den;
     Real rad_to_scale_ratio = rad/scale_length;
     Real kinetic_energy = G*pow(tot_mass,2.0)/(4*scale_length)*(4*pow(rad_to_scale_ratio,3)*log((rad+scale_length)/rad)-4*pow(rad_to_scale_ratio,2.0)+2*rad_to_scale_ratio-1+(pow(rad_to_scale_ratio,2.0)+rad_to_scale_ratio+1)/pow(1+rad_to_scale_ratio,3.0));
