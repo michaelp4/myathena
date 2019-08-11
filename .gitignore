@@ -1,9 +1,6 @@
 # Configured outputs
-
-# my removal
-# Makefile
-# src/defs.hpp
-#end my removal
+Makefile
+src/defs.hpp
 
 # Object and binary directories
 obj/
