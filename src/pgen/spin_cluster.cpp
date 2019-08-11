@@ -3,13 +3,10 @@
 // Copyright(C) 2014 James M. Stone <jmstone@princeton.edu> and other code contributors
 // Licensed under the 3-clause BSD License, see LICENSE file for details
 //========================================================================================
-//! \file blast.cpp
-//  \brief Problem generator for spherical blast wave problem.  Works in Cartesian,
-//         cylindrical, and spherical coordinates.  Contains post-processing code
-//         to check whether blast is spherical for regression tests
+//! \file spin_cluster.cpp
+//  \brief Galaxy cluster with added spin.
 //
-// REFERENCE: P. Londrillo & L. Del Zanna, "High-order upwind schemes for
-//   multidimensional MHD", ApJ, 530, 508 (2000), and references therein.
+// REFERENCE: Hernquist 1990.
 
 // C++ headers
 #include <algorithm>
@@ -35,6 +32,12 @@
 //========================================================================================
 
 void MeshBlock::ProblemGenerator(ParameterInput *pin) {
+  // Setting the Gravitational constant
+  G = 0.00430091; // Units: pc (parsec) / solar mass * (km/s)^2
+
+  Real tot_mass = pin->GetOrAddReal("problem","tot_mass",pow(10.0,15.0));
+  Real scale_length = pin->GetOrAddReal("problem","scale_length",676);
+
   Real rout = pin->GetReal("problem","radius");
   Real rin  = rout - pin->GetOrAddReal("problem","ramp",0.0);
   Real pa   = pin->GetOrAddReal("problem","pamb",1.0);
@@ -58,14 +61,6 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin) {
     x0 = x1_0;
     y0 = x2_0;
     z0 = x3_0;
-  } else if (COORDINATE_SYSTEM == "cylindrical") {
-    x0 = x1_0*std::cos(x2_0);
-    y0 = x1_0*std::sin(x2_0);
-    z0 = x3_0;
-  } else if (COORDINATE_SYSTEM == "spherical_polar") {
-    x0 = x1_0*std::sin(x2_0)*std::cos(x3_0);
-    y0 = x1_0*std::sin(x2_0)*std::sin(x3_0);
-    z0 = x1_0*std::cos(x2_0);
   } else {
     // Only check legality of COORDINATE_SYSTEM once in this function
     std::stringstream msg;
@@ -78,118 +73,23 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin) {
   for (int k=ks; k<=ke; k++) {
   for (int j=js; j<=je; j++) {
   for (int i=is; i<=ie; i++) {
-    Real rad;
     if (COORDINATE_SYSTEM == "cartesian") {
       Real x = pcoord->x1v(i);
       Real y = pcoord->x2v(j);
       Real z = pcoord->x3v(k);
-      rad = std::sqrt(SQR(x - x0) + SQR(y - y0) + SQR(z - z0));
-    } else if (COORDINATE_SYSTEM == "cylindrical") {
-      Real x = pcoord->x1v(i)*std::cos(pcoord->x2v(j));
-      Real y = pcoord->x1v(i)*std::sin(pcoord->x2v(j));
-      Real z = pcoord->x3v(k);
-      rad = std::sqrt(SQR(x - x0) + SQR(y - y0) + SQR(z - z0));
-    } else { // if (COORDINATE_SYSTEM == "spherical_polar")
-      Real x = pcoord->x1v(i)*std::sin(pcoord->x2v(j))*std::cos(pcoord->x3v(k));
-      Real y = pcoord->x1v(i)*std::sin(pcoord->x2v(j))*std::sin(pcoord->x3v(k));
-      Real z = pcoord->x1v(i)*std::cos(pcoord->x2v(j));
-      rad = std::sqrt(SQR(x - x0) + SQR(y - y0) + SQR(z - z0));
     }
+    Real rad = std::sqrt(SQR(x - x0) + SQR(y - y0) + SQR(z - z0));
 
-    Real den = da;
-    if (rad < rout) {
-      if (rad < rin) {
-        den = drat*da;
-      } else {   // add smooth ramp in density
-        Real f = (rad-rin) / (rout-rin);
-        Real log_den = (1.0-f) * std::log(drat*da) + f * std::log(da);
-        den = std::exp(log_den);
-      }
-    }
-
+    // Using the function from Hernquist 1990 for mass density and eq of state
+    Real den = tot_mass/(2*M_PI)*scale_length/rad*1/pow(rad+scale_length,3.0);
     phydro->u(IDN,k,j,i) = den;
+    Real rad_to_scale_ratio = rad/scale_length;
+    Real kinetic_energy = G*pow(tot_mass,2.0)/(4*scale_length)*(4*pow(rad_to_scale_ratio,3)*log((rad+scale_length)/rad)-4*pow(rad_to_scale_ratio,2.0)+2*rad_to_scale_ratio-1+(pow(rad_to_scale_ratio,2.0)+rad_to_scale_ratio+1)/pow(1+rad_to_scale_ratio,3.0));
     phydro->u(IM1,k,j,i) = 0.0;
     phydro->u(IM2,k,j,i) = 0.0;
     phydro->u(IM3,k,j,i) = 0.0;
-    if (NON_BAROTROPIC_EOS) {
-      Real pres = pa;
-      if (rad < rout) {
-        if (rad < rin) {
-          pres = prat*pa;
-        } else {  // add smooth ramp in pressure
-          Real f = (rad-rin) / (rout-rin);
-          Real log_pres = (1.0-f) * std::log(prat*pa) + f * std::log(pa);
-          pres = std::exp(log_pres);
-        }
-      }
-      phydro->u(IEN,k,j,i) = pres/gm1;
-      if (RELATIVISTIC_DYNAMICS)  // this should only ever be SR with this file
-        phydro->u(IEN,k,j,i) += den;
-    }
+    phydro->u(IEN,k,j,i) = kinetic_energy;
   }}}
-
-  // initialize interface B and total energy
-  if (MAGNETIC_FIELDS_ENABLED) {
-    for (int k = ks; k <= ke; ++k) {
-      for (int j = js; j <= je; ++j) {
-        for (int i = is; i <= ie+1; ++i) {
-          if (COORDINATE_SYSTEM == "cartesian") {
-            pfield->b.x1f(k,j,i) = b0 * std::cos(angle);
-          } else if (COORDINATE_SYSTEM == "cylindrical") {
-            Real phi = pcoord->x2v(j);
-            pfield->b.x1f(k,j,i) =
-                b0 * (std::cos(angle) * std::cos(phi) + std::sin(angle) * std::sin(phi));
-          } else { //if (COORDINATE_SYSTEM == "spherical_polar") {
-            Real theta = pcoord->x2v(j);
-            Real phi = pcoord->x3v(k);
-            pfield->b.x1f(k,j,i) = b0 * std::abs(std::sin(theta))
-                * (std::cos(angle) * std::cos(phi) + std::sin(angle) * std::sin(phi));
-          }
-        }
-      }
-    }
-    for (int k = ks; k <= ke; ++k) {
-      for (int j = js; j <= je+1; ++j) {
-        for (int i = is; i <= ie; ++i) {
-          if (COORDINATE_SYSTEM == "cartesian") {
-            pfield->b.x2f(k,j,i) = b0 * std::sin(angle);
-          } else if (COORDINATE_SYSTEM == "cylindrical") {
-            Real phi = pcoord->x2v(j);
-            pfield->b.x2f(k,j,i) =
-                b0 * (std::sin(angle) * std::cos(phi) - std::cos(angle) * std::sin(phi));
-          } else { //if (COORDINATE_SYSTEM == "spherical_polar") {
-            Real theta = pcoord->x2v(j);
-            Real phi = pcoord->x3v(k);
-            pfield->b.x2f(k,j,i) = b0 * std::cos(theta)
-                * (std::cos(angle) * std::cos(phi) + std::sin(angle) * std::sin(phi));
-            if (std::sin(theta) < 0.0)
-              pfield->b.x2f(k,j,i) *= -1.0;
-          }
-        }
-      }
-    }
-    for (int k = ks; k <= ke+1; ++k) {
-      for (int j = js; j <= je; ++j) {
-        for (int i = is; i <= ie; ++i) {
-          if (COORDINATE_SYSTEM == "cartesian" || COORDINATE_SYSTEM == "cylindrical") {
-            pfield->b.x3f(k,j,i) = 0.0;
-          } else { //if (COORDINATE_SYSTEM == "spherical_polar") {
-            Real phi = pcoord->x3v(k);
-            pfield->b.x3f(k,j,i) =
-                b0 * (std::sin(angle) * std::cos(phi) - std::cos(angle) * std::sin(phi));
-          }
-        }
-      }
-    }
-    for (int k = ks; k <= ke; ++k) {
-      for (int j = js; j <= je; ++j) {
-        for (int i = is; i <= ie; ++i) {
-          phydro->u(IEN,k,j,i) += 0.5*b0*b0;
-        }
-      }
-    }
-  }
-
 }
 
 //========================================================================================

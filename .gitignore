@@ -1,6 +1,7 @@
 # Configured outputs
 Makefile
 src/defs.hpp
+settings.json
 
 # Object and binary directories
 obj/
