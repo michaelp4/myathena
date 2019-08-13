@@ -70,6 +70,8 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin) {
     throw std::runtime_error(msg.str().c_str());
   }
 
+  EnrollUserExplicitSourceFunction(Grav);
+
   // setup uniform ambient medium with spherical over-pressured region
   for (int k=ks; k<=ke; k++) {
   for (int j=js; j<=je; j++) {
@@ -93,6 +95,23 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin) {
     phydro->u(IEN,k,j,i) = kinetic_energy;
   }}}
 }
+
+void Grav(MeshBlock *pmb, const Real time, const Real dt,
+              const AthenaArray<Real> &prim, const AthenaArray<Real> &bcc,
+              AthenaArray<Real> &cons) {
+  for (int k=ks; k<=ke; k++) {
+  for (int j=js; j<=je; j++) {
+  for (int i=is; i<=ie; i++) {
+    Real x = pcoord->x1v(i);
+    Real y = pcoord->x2v(j);
+    Real z = pcoord->x3v(k);
+    Real den = u(IDN,k,j,i);
+    Real rad = std::sqrt(SQR(x - x0) + SQR(y - y0) + SQR(z - z0));
+    cons(IM3,k,j,i) -= dt*G*den/SQR(rad);
+    cons(IEN,k,j,i) -= dt*G*den/SQR(rad)*cons(IM3,k,j,i);
+  }}}
+}
+
 
 //========================================================================================
 //! \fn void Mesh::UserWorkAfterLoop(ParameterInput *pin)
