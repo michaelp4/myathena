@@ -98,7 +98,7 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin) {
   }}}
 }
 
-void Mesh::Grav(MeshBlock *pmb, const Real time, const Real dt,
+void Grav(MeshBlock *pmb, const Real time, const Real dt,
               const AthenaArray<Real> &prim, const AthenaArray<Real> &bcc,
               AthenaArray<Real> &cons) {
   // Setting the Gravitational constant
