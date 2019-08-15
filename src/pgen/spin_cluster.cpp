@@ -42,7 +42,7 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin) {
   // Setting the Gravitational constant
   Real G = 0.00430091; // Units: pc (parsec) / solar mass * (km/s)^2
 
-  Real tot_mass = pin->GetOrAdReal("problem","tot_mass",pow(10.0,15.0));
+  Real tot_mass = pin->GetOrAddReal("problem","tot_mass",pow(10.0,15.0));
   Real scale_length = pin->GetOrAddReal("problem","scale_length",676);
   Real angular_velocity = pin->GetOrAddReal("problem","angular_velocity",0.0);
 
