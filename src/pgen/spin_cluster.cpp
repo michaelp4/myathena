@@ -26,6 +26,13 @@
 #include "../mesh/mesh.hpp"
 #include "../parameter_input.hpp"
 
+
+void Mesh::InitUserMeshData(ParameterInput *pin) {
+  if(pin->GetOrAddReal("problem","add_grav",0.0) == 1.0) {
+    EnrollUserExplicitSourceFunction(Grav);
+  }
+}
+
 //========================================================================================
 //! \fn void MeshBlock::ProblemGenerator(ParameterInput *pin)
 //  \brief Spherical blast wave test problem generator
@@ -70,9 +77,6 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin) {
     throw std::runtime_error(msg.str().c_str());
   }
 
-  if(GetOrAddReal("problem","add_grav",0.0) == 1.0) {
-    EnrollUserExplicitSourceFunction(Grav);
-  }
 
   // setup uniform ambient medium with spherical over-pressured region
   for (int k=ks; k<=ke; k++) {
