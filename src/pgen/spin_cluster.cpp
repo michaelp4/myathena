@@ -35,7 +35,7 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin) {
   // Setting the Gravitational constant
   Real G = 0.00430091; // Units: pc (parsec) / solar mass * (km/s)^2
 
-  Real tot_mass = pin->GetOrAddReal("problem","tot_mass",pow(10.0,15.0));
+  Real tot_mass = pin->GetOrAdReal("problem","tot_mass",pow(10.0,15.0));
   Real scale_length = pin->GetOrAddReal("problem","scale_length",676);
   Real angular_velocity = pin->GetOrAddReal("problem","angular_velocity",0.0);
 
@@ -69,7 +69,7 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin) {
         << "Unrecognized COORDINATE_SYSTEM= " << COORDINATE_SYSTEM << std::endl;
     throw std::runtime_error(msg.str().c_str());
   }
-  
+
   if(GetOrAddReal("problem","add_grav",0.0) == 1.0) {
     EnrollUserExplicitSourceFunction(Grav);
   }
@@ -98,9 +98,12 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin) {
   }}}
 }
 
-void Grav(MeshBlock *pmb, const Real time, const Real dt,
+void Mesh::Grav(MeshBlock *pmb, const Real time, const Real dt,
               const AthenaArray<Real> &prim, const AthenaArray<Real> &bcc,
               AthenaArray<Real> &cons) {
+  // Setting the Gravitational constant
+  Real G = 0.00430091; // Units: pc (parsec) / solar mass * (km/s)^2
+
   for (int k=ks; k<=ke; k++) {
   for (int j=js; j<=je; j++) {
   for (int i=is; i<=ie; i++) {
