@@ -69,8 +69,10 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin) {
         << "Unrecognized COORDINATE_SYSTEM= " << COORDINATE_SYSTEM << std::endl;
     throw std::runtime_error(msg.str().c_str());
   }
-
-  EnrollUserExplicitSourceFunction(Grav);
+  
+  if(GetOrAddReal("problem","add_grav",0.0) == 1.0) {
+    EnrollUserExplicitSourceFunction(Grav);
+  }
 
   // setup uniform ambient medium with spherical over-pressured region
   for (int k=ks; k<=ke; k++) {
