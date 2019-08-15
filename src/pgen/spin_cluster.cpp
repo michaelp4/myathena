@@ -102,21 +102,22 @@ void Grav(MeshBlock *pmb, const Real time, const Real dt,
               const AthenaArray<Real> &prim, const AthenaArray<Real> &bcc,
               AthenaArray<Real> &cons) {
   // Setting the Gravitational constant
-  Real G = 0.00430091; // Units: pc (parsec) / solar mass * (km/s)^2
+  // Real G = 0.00430091; // Units: pc (parsec) / solar mass * (km/s)^2
+  // Real x0   = pin->GetOrAddReal("problem","x1_0",0.0);
+  // Real y0   = pin->GetOrAddReal("problem","x2_0",0.0);
+  // Real z0   = pin->GetOrAddReal("problem","x3_0",0.0);
 
-
-  for (int k=pmb->ks; k<=pmb->ke; k++) {
-  for (int j=pmb->js; j<=pmb->je; j++) {
-  for (int i=pmb->is; i<=pmb->ie; i++) {
-    Real x = pcoord->x1v(i);
-    Real y = pcoord->x2v(j);
-    Real z = pcoord->x3v(k);
-    Real den = u(IDN,k,j,i);
-    // TODO: find a way to change the zeros to the x0, y0 and z0 from input
-    Real rad = std::sqrt(SQR(x - 0) + SQR(y - 0) + SQR(z - 0));
-    cons(IM3,k,j,i) -= dt*G*den/SQR(rad);
-    cons(IEN,k,j,i) -= dt*G*den/SQR(rad)*cons(IM3,k,j,i);
-  }}}
+  // for (int k=pmb->ks; k<=pmb->ke; k++) {
+  // for (int j=pmb->js; j<=pmb->je; j++) {
+  // for (int i=pmb->is; i<=pmb->ie; i++) {
+  //   Real x = pcoord->x1v(i);
+  //   Real y = pcoord->x2v(j);
+  //   Real z = pcoord->x3v(k);
+  //   Real den = u(IDN,k,j,i);
+  //   Real rad = std::sqrt(SQR(x - x0) + SQR(y - y0) + SQR(z - z0));
+  //   cons(IM3,k,j,i) -= dt*G*den/SQR(rad);
+  //   cons(IEN,k,j,i) -= dt*G*den/SQR(rad)*cons(IM3,k,j,i);
+  // }}}
 }
 
 
