@@ -125,7 +125,7 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin) {
     phydro->u(IM3,k,j,i) = 0.0;
     phydro->u(IEN,k,j,i) = kinetic_energy;
   }}}
-  std::cout<<std::endl<<"finished initializing spin_cluster"<<std::endl<<std::endl;
+  log_info("finished initializing spin_cluster");
 }
 
 //========================================================================================
