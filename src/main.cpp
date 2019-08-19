@@ -365,6 +365,9 @@ int main(int argc, char *argv[]) {
     std::cout<<std::endl<<"Setup complete, entering main loop..."<<std::endl<<std::endl;
   }
 
+  // remove this code sometime:
+  std::cout<<std::endl<<"self gravity turned on:" + SELF_GRAVITY_ENABLED<<std::endl<<std::endl;
+  // end of removal
   clock_t tstart = clock();
 #ifdef OPENMP_PARALLEL
   double omp_start_time = omp_get_wtime();
