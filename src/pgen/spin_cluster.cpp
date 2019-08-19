@@ -49,11 +49,11 @@ void Grav(MeshBlock *pmb, const Real time, const Real dt,
   // }}}
 }
 
-void Mesh::InitUserMeshData(ParameterInput *pin) {
-  if(pin->GetOrAddReal("problem","add_grav",0.0) == 1.0) {
-    EnrollUserExplicitSourceFunction(Grav);
-  }
-}
+// void Mesh::InitUserMeshData(ParameterInput *pin) {
+//   if(pin->GetOrAddReal("problem","add_grav",0.0) == 1.0) {
+//     EnrollUserExplicitSourceFunction(Grav);
+//   }
+// }
 
 //========================================================================================
 //! \fn void MeshBlock::ProblemGenerator(ParameterInput *pin)
@@ -62,10 +62,9 @@ void Mesh::InitUserMeshData(ParameterInput *pin) {
 
 void MeshBlock::ProblemGenerator(ParameterInput *pin) {
   // Setting the Gravitational constant
-  // TODO change units to kiloparsec and solar mass is wrong  
-  Real G = 0.00430091*pow(10.0,7.0); // Units: pc (parsec) / solar mass * (km/s)^2
+  Real G = 0.00430091*pow(10.0,7.0); // Units: kpc (kilo parsec) / 10^10 solar mass * (km/s)^2
 
-  Real tot_mass = pin->GetOrAddReal("problem","tot_mass",pow(10.0,15.0));
+  Real tot_mass = pin->GetOrAddReal("problem","tot_mass",pow(10.0,5.0));
   Real scale_length = pin->GetOrAddReal("problem","scale_length",676);
   Real angular_velocity = pin->GetOrAddReal("problem","angular_velocity",0.0);
 
@@ -117,15 +116,17 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin) {
     Real den = tot_mass/(2*PI)*scale_length/rad*1/pow(rad+scale_length,3.0);
     phydro->u(IDN,k,j,i) = den;
     Real rad_to_scale_ratio = rad/scale_length;
-    Real kinetic_energy = G*pow(tot_mass,2.0)/(4*scale_length)*(4*pow(rad_to_scale_ratio,3)*log((rad+scale_length)/rad)-4*pow(rad_to_scale_ratio,2.0)+2*rad_to_scale_ratio-1+(pow(rad_to_scale_ratio,2.0)+rad_to_scale_ratio+1)/pow(1+rad_to_scale_ratio,3.0));
-    phydro->u(IM1,k,j,i) = angular_velocity*y;
-    phydro->u(IM2,k,j,i) = angular_velocity*x;
+    Real kinetic_energy = G*pow(tot_mass,2.0)/(4*scale_length)*(4*pow(rad_to_scale_ratio,3.0)*log((rad+scale_length)/rad)-4*pow(rad_to_scale_ratio,2.0)+2*rad_to_scale_ratio-1+(pow(rad_to_scale_ratio,2.0)+rad_to_scale_ratio+1)/pow(1+rad_to_scale_ratio,3.0));
+    phydro->u(IM1,k,j,i) = 0.0;//angular_velocity*y
+    phydro->u(IM2,k,j,i) = 0.0;//angular_velocity*x
     phydro->u(IM3,k,j,i) = 0.0;
     phydro->u(IEN,k,j,i) = kinetic_energy;
   }}}
+  std::cout<<std::endl<<"finished initializing spin_cluster"<<std::endl<<std::endl;
+
 }
 
-//=============d===========================================================================
+//========================================================================================
 //! \fn void Mesh::UserWorkAfterLoop(ParameterInput *pin)
 //  \brief Check radius of sphere to make sure it is round
 //========================================================================================
