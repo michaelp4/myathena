@@ -116,7 +116,7 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin) {
     // }
   
     // Using the function from Hernquist 1990 for mass density and eq of state
-    Real den = tot_mass/(2*PI)*scale_length/rad*1/pow(rad+scale_length,3.0);
+    Real den = (tot_mass/(2*PI))*(scale_length/rad)*(1/pow(rad+scale_length,3.0));
     phydro->u(IDN,k,j,i) = den;
     Real rad_to_scale_ratio = rad/scale_length;
     Real kinetic_energy = G*pow(tot_mass,2.0)/(4*scale_length)*(4*pow(rad_to_scale_ratio,3.0)*log((rad+scale_length)/rad)-4*pow(rad_to_scale_ratio,2.0)+2*rad_to_scale_ratio-1+(pow(rad_to_scale_ratio,2.0)+rad_to_scale_ratio+1)/pow(1+rad_to_scale_ratio,3.0));
