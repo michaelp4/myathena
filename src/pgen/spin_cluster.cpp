@@ -26,6 +26,9 @@
 #include "../mesh/mesh.hpp"
 #include "../parameter_input.hpp"
 
+void log_info(std::string msg) {
+    std::cout<<std::endl<<"*** " + msg + " ***"<<std::endl;
+}
 
 void Grav(MeshBlock *pmb, const Real time, const Real dt,
               const AthenaArray<Real> &prim, const AthenaArray<Real> &bcc,
@@ -123,7 +126,6 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin) {
     phydro->u(IEN,k,j,i) = kinetic_energy;
   }}}
   std::cout<<std::endl<<"finished initializing spin_cluster"<<std::endl<<std::endl;
-
 }
 
 //========================================================================================
@@ -132,7 +134,10 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin) {
 //========================================================================================
 
 void Mesh::UserWorkAfterLoop(ParameterInput *pin) {
+  log_info("in UserWorkAfterLoop");
+  return;
   if (!pin->GetOrAddBoolean("problem","compute_error",false)) return;
+
 
   // analysis - check shape of the spherical blast wave
   int is=pblock->is, ie=pblock->ie;
