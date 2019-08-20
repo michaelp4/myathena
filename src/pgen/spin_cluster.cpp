@@ -101,7 +101,9 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin) {
         << "Unrecognized COORDINATE_SYSTEM= " << COORDINATE_SYSTEM << std::endl;
     throw std::runtime_error(msg.str().c_str());
   }
-
+  // log stuff intialization
+  std::string density_log = "";
+  std::string kinetic_energy_log = "";
 
   // setup uniform ambient medium with spherical over-pressured region
   for (int k=ks; k<=ke; k++) {
@@ -124,7 +126,21 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin) {
     phydro->u(IM2,k,j,i) = 0.0;//angular_velocity*x
     phydro->u(IM3,k,j,i) = 0.0;
     phydro->u(IEN,k,j,i) = kinetic_energy;
-  }}}
+
+    if (k==ks){
+      density_log += std::to_string(den) + ",";
+      kinetic_energy_log += std::to_string(kinetic_energy) + ",";
+    }
+  }
+  if (k==ks){
+      density_log += "\n";
+      kinetic_energy_log += "\n";
+  }
+  }}
+  log_info("density matrix:");
+  log_info(density_log);
+  log_info("kinetic enegry matrix:");
+  log_info(kinetic_energy_log);
   log_info("finished initializing spin_cluster");
 }
 
