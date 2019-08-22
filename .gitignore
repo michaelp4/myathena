@@ -24,7 +24,6 @@ obj/
 *.lib
 
 # Executables
-*.exe
 *.out
 *.app
 athena
