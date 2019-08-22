@@ -1,0 +1,34 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build my athena",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "-g",
+                "-o",
+                "bin/athena.exe",
+                "src/*.cpp"
+                "src/bvals/*.cpp"
+                "src/coordinates/*.cpp"
+                "src/eos/*.cpp"
+                "src/fft/*.cpp"
+                "src/field/*.cpp"
+                "src/gravity/*.cpp"
+                "src/hydro/*.cpp"
+                "src/mesh/*.cpp"
+                "src/multigrid/*.cpp"
+                "src/outputs/*.cpp"
+                "src/pgen/*.cpp"
+                "src/reconstruct/*.cpp"
+                "src/task_list/*.cpp"
+                "src/utils/*.cpp"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}

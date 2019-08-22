@@ -5,7 +5,6 @@ settings.json
 
 # Object and binary directories
 obj/
-bin/
 
 # Compiled object files
 *.slo
