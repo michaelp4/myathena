@@ -1252,7 +1252,6 @@ void Mesh::Initialize(int res_flag, ParameterInput *pin) {
 
     if (res_flag==0) {
 #pragma omp parallel for num_threads(nthreads)
-    std::cout<<std::endl<<"*** in mesh intialization nmp: "<<std::to_string(nmb)<<" ***"<<std::endl;
       for (int i=0; i<nmb; ++i) {
         MeshBlock *pmb=pmb_array[i];
         pmb->ProblemGenerator(pin);
