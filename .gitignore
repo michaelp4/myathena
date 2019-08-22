@@ -26,7 +26,6 @@ obj/
 # Executables
 *.out
 *.app
-athena
 
 # Athena output files
 *.tab
