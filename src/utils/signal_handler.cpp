@@ -34,11 +34,11 @@ void SignalHandlerInit(void) {
   for (int n=0; n<nsignal; n++) signalflag[n]=0;
   signal(SIGTERM, SetSignalFlag);
   signal(SIGINT,  SetSignalFlag);
-  signal(SIGALRM, SetSignalFlag);
-  sigemptyset(&mask);
-  sigaddset(&mask, SIGTERM);
-  sigaddset(&mask, SIGINT);
-  sigaddset(&mask, SIGALRM);
+  // signal(SIGALRM, SetSignalFlag);
+  // sigemptyset(&mask);
+  // sigaddset(&mask, SIGTERM);
+  // sigaddset(&mask, SIGINT);
+  // sigaddset(&mask, SIGALRM);
 }
 
 //----------------------------------------------------------------------------------------
@@ -47,7 +47,7 @@ void SignalHandlerInit(void) {
 
 int CheckSignalFlags(void) {
   int ret = 0;
-  sigprocmask(SIG_BLOCK, &mask, NULL);
+  // sigprocmask(SIG_BLOCK, &mask, NULL);
 #ifdef MPI_PARALLEL
   MPI_Allreduce(MPI_IN_PLACE,
                 const_cast<void *>(reinterpret_cast<volatile void *>(signalflag)),
@@ -55,7 +55,7 @@ int CheckSignalFlags(void) {
 #endif
   for (int n=0; n<nsignal; n++)
     ret+=signalflag[n];
-  sigprocmask(SIG_UNBLOCK,&mask,NULL);
+  // sigprocmask(SIG_UNBLOCK,&mask,NULL);
   return ret;
 }
 
@@ -73,9 +73,9 @@ int GetSignalFlag(int s) {
   case SIGINT:
     ret=signalflag[IINT];
     break;
-  case SIGALRM:
-    ret=signalflag[IALRM];
-    break;
+  // case SIGALRM:
+  //   ret=signalflag[IALRM];
+  //   break;
   default:
     // nothing
     break;
@@ -97,10 +97,10 @@ void SetSignalFlag(int s) {
     signalflag[IINT]=1;
     signal(s, SetSignalFlag);
     break;
-  case SIGALRM:
-    signalflag[IALRM]=1;
-    signal(s, SetSignalFlag);
-    break;
+  // case SIGALRM:
+  //   signalflag[IALRM]=1;
+  //   signal(s, SetSignalFlag);
+  //   break;
   default:
     // nothing
     break;
@@ -113,7 +113,7 @@ void SetSignalFlag(int s) {
 //  \brief Set the wall time limit alarm
 
 void SetWallTimeAlarm(int t) {
-  alarm(t);
+  // alarm(t);
   return;
 }
 
@@ -122,7 +122,7 @@ void SetWallTimeAlarm(int t) {
 //  \brief Cancel the wall time limit alarm
 
 void CancelWallTimeAlarm(void) {
-  alarm(0);
+  // alarm(0);
   return;
 }
 

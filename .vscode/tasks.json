@@ -9,21 +9,26 @@
                 "-g",
                 "-o",
                 "bin/athena.exe",
-                "src/*.cpp"
-                "src/bvals/*.cpp"
-                "src/coordinates/*.cpp"
-                "src/eos/*.cpp"
-                "src/fft/*.cpp"
-                "src/field/*.cpp"
-                "src/gravity/*.cpp"
-                "src/hydro/*.cpp"
-                "src/mesh/*.cpp"
-                "src/multigrid/*.cpp"
-                "src/outputs/*.cpp"
-                "src/pgen/*.cpp"
-                "src/reconstruct/*.cpp"
-                "src/task_list/*.cpp"
-                "src/utils/*.cpp"
+                "src/*.cpp",
+                "src/bvals/*.cpp",
+                "src/coordinates/*.cpp",
+                "src/eos/*.cpp",
+                "src/field/*.cpp",
+                "src/hydro/*.cpp",
+                "src/hydro/srcterms/*.cpp",
+                "src/hydro/hydro_diffusion/*.cpp",
+                "src/field/field_diffusion/*.cpp",
+                "src/hydro/rsolvers/hydro/hllc.cpp",
+                "src/mesh/*.cpp",
+                "src/outputs/*.cpp",
+                "src/reconstruct/*.cpp",
+                "src/task_list/*.cpp",
+                "src/utils/*.cpp",
+                "src/fft/*.cpp",
+                "src/multigrid/*.cpp",
+                "src/gravity/*.cpp",
+                "src/pgen/spin_cluster.cpp",
+                "src/pgen/default_pgen.cpp"  
             ],
             "group": {
                 "kind": "build",
