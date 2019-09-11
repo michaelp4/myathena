@@ -3,7 +3,7 @@
 
 # Files for conditional compilation
 
-PROBLEM_FILE = blast.cpp
+PROBLEM_FILE = spin_cluster.cpp
 COORDINATES_FILE = cartesian.cpp
 EOS_FILE = adiabatic_hydro.cpp
 RSOLVER_FILE = hllc.cpp
@@ -12,11 +12,11 @@ MPIFFT_FILE =
 
 # General compiler specifications
 
-CXX := g++
-CPPFLAGS := 
+CXX := mpicxx
+CPPFLAGS := -I/gpfs0/system/uri.orig/hdf5-1.10/include
 CXXFLAGS := -O3 -std=c++11
-LDFLAGS := 
-LDLIBS := 
+LDFLAGS := -L/gpfs0/system/uri.orig/hdf5-1.10/lib
+LDLIBS := -lhdf5
 
 # Preliminary definitions
 
