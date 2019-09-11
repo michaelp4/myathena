@@ -3,7 +3,7 @@
 
 # Files for conditional compilation
 
-PROBLEM_FILE = spin_cluster.cpp
+PROBLEM_FILE = blast.cpp
 COORDINATES_FILE = cartesian.cpp
 EOS_FILE = adiabatic_hydro.cpp
 RSOLVER_FILE = hllc.cpp
