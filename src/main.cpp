@@ -463,8 +463,8 @@ int main(int argc, char *argv[]) {
       std::cout << std::endl << "Terminating on Terminate signal" << std::endl;
     } else if (SignalHandler::GetSignalFlag(SIGINT) != 0) {
       std::cout << std::endl << "Terminating on Interrupt signal" << std::endl;
-    } else if (SignalHandler::GetSignalFlag(SIGALRM) != 0) {
-      std::cout << std::endl << "Terminating on wall-time limit" << std::endl;
+    // } else if (SignalHandler::GetSignalFlag(SIGALRM) != 0) {
+    //   std::cout << std::endl << "Terminating on wall-time limit" << std::endl;
     } else if (pmesh->ncycle == pmesh->nlim) {
       std::cout << std::endl << "Terminating on cycle limit" << std::endl;
     } else {
