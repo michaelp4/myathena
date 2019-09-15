@@ -63,13 +63,16 @@ void Grav(MeshBlock *pmb, const Real time, const Real dt,
     Real dPhi = (G*tot_mass)/pow(rad+scale_length, 2.0);
     Real force = -dPhi*den;
     Real dMomentum = force*dt;
-    cons(IM1,k,j,i) += dMomentum*x/rad;
-    cons(IM2,k,j,i) += dMomentum*y/rad;
-    cons(IM3,k,j,i) += dMomentum*z/rad;
+    Real dIM1 = dMomentum*x/rad;
+    Real dIM2 = dMomentum*y/rad;
+    Real dIM3 = dMomentum*z/rad;
+    cons(IM1,k,j,i) += dIM1;
+    cons(IM2,k,j,i) += dIM2;
+    cons(IM3,k,j,i) += dIM3;
     Real velocity_x = cons(IM1,k,j,i) / den;
     Real velocity_y = cons(IM2,k,j,i) / den;
     Real velocity_z = cons(IM3,k,j,i) / den;
-    // cons(IEN,k,j,i) += cons(IM1,k,j,i)*velocity_x+cons(IM2,k,j,i)*velocity_y+cons(IM3,k,j,i)*velocity_z;
+    cons(IEN,k,j,i) += dIM1*velocity_x+dIM2*velocity_y+dIM3*velocity_z;
 
     // logs:
     // std::cout<<std::endl<<"momentum1:"<<cons(IM1,k,j,i)<<std::endl;
