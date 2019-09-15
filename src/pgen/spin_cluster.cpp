@@ -37,7 +37,7 @@ void MeshBlock::log_info(std::string msg) {
 void Grav(MeshBlock *pmb, const Real time, const Real dt,
               const AthenaArray<Real> &prim, const AthenaArray<Real> &bcc,
               AthenaArray<Real> &cons) {
-  std::cout<<std::endl<<"***in Grav calced params:***"<<std::endl;
+  // std::cout<<std::endl<<"***in Grav calced params:***"<<std::endl;
 
   // Setting the Gravitational constant
   Real G = 0.00430091; // Units: pc (parsec) / solar mass * (km/s)^2
@@ -70,9 +70,10 @@ void Grav(MeshBlock *pmb, const Real time, const Real dt,
     Real velocity_y = cons(IM2,k,j,i) / den;
     Real velocity_z = cons(IM3,k,j,i) / den;
     cons(IEN,k,j,i) += cons(IM1,k,j,i)*velocity_x+cons(IM2,k,j,i)*velocity_y+cons(IM3,k,j,i)*velocity_z;
-    std::cout<<std::endl<<"momentum1:"<<cons(IM1,k,j,i)<<std::endl;
-    std::cout<<std::endl<<"momentum2:"<<cons(IM2,k,j,i)<<std::endl;
-    std::cout<<std::endl<<"momentum3:"<<cons(IM3,k,j,i)<<std::endl;
+
+    // std::cout<<std::endl<<"momentum1:"<<cons(IM1,k,j,i)<<std::endl;
+    // std::cout<<std::endl<<"momentum2:"<<cons(IM2,k,j,i)<<std::endl;
+    // std::cout<<std::endl<<"momentum3:"<<cons(IM3,k,j,i)<<std::endl;
 
     // cons(IM3,k,j,i) -= dt*G*den/SQR(rad);
     // cons(IEN,k,j,i) -= dt*G*den/SQR(rad)*cons(IM3,k,j,i);
@@ -80,12 +81,7 @@ void Grav(MeshBlock *pmb, const Real time, const Real dt,
 }
 
 void Mesh::InitUserMeshData(ParameterInput *pin) {
-  std::cout<<std::endl<<"***in InitUserMeshData***"<<std::endl;
-  std::cout<<std::endl<<"add grav:"<<pin->GetOrAddReal("problem","add_grav", true)<<std::endl;
-  std::cout<<std::endl<<"add grav:"<<pin->GetOrAddReal("problem","add_grav", true)<<std::endl;
-
-  if(pin->GetOrAddReal("problem","add_grav", true)) {
-    std::cout<<std::endl<<"calling EnrollUserExplicitSourceFunction"<<std::endl;
+  if(pin->GetOrAddReal("problem","add_grav", false)) {
     EnrollUserExplicitSourceFunction(Grav);
   }
 }
@@ -107,7 +103,7 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin) {
   Real rout = pin->GetReal("problem","radius");
   Real rin  = rout - pin->GetOrAddReal("problem","ramp",0.0);
   Real pa   = pin->GetOrAddReal("problem","pamb",1.0);
-  
+
   log_info("pamp:" + std::to_string(pa));
   
   Real da   = pin->GetOrAddReal("problem","damb",1.0);
