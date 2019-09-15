@@ -37,6 +37,8 @@ void MeshBlock::log_info(std::string msg) {
 void Grav(MeshBlock *pmb, const Real time, const Real dt,
               const AthenaArray<Real> &prim, const AthenaArray<Real> &bcc,
               AthenaArray<Real> &cons) {
+  std::cout<<std::endl<<"***in Grav calced params:***"<<std::endl;
+
   // Setting the Gravitational constant
   Real G = 0.00430091; // Units: pc (parsec) / solar mass * (km/s)^2
   Real scale_length = 676;
@@ -68,7 +70,6 @@ void Grav(MeshBlock *pmb, const Real time, const Real dt,
     Real velocity_y = cons(IM2,k,j,i) / den;
     Real velocity_z = cons(IM3,k,j,i) / den;
     cons(IEN,k,j,i) += cons(IM1,k,j,i)*velocity_x+cons(IM2,k,j,i)*velocity_y+cons(IM3,k,j,i)*velocity_z;
-    std::cout<<std::endl<<"***in Grav calced params:***"<<std::endl;
     std::cout<<std::endl<<"momentum1:"<<cons(IM1,k,j,i)<<std::endl;
     std::cout<<std::endl<<"momentum2:"<<cons(IM2,k,j,i)<<std::endl;
     std::cout<<std::endl<<"momentum3:"<<cons(IM3,k,j,i)<<std::endl;
@@ -79,7 +80,11 @@ void Grav(MeshBlock *pmb, const Real time, const Real dt,
 }
 
 void Mesh::InitUserMeshData(ParameterInput *pin) {
+  std::cout<<std::endl<<"***in InitUserMeshData***"<<std::endl;
+  std::cout<<std::endl<<"add grav:"<<pin->GetOrAddReal("problem","add_grav", false)<<std::endl;
+
   if(pin->GetOrAddReal("problem","add_grav", false)) {
+    std::cout<<std::endl<<"calling EnrollUserExplicitSourceFunction"<<std::endl;
     EnrollUserExplicitSourceFunction(Grav);
   }
 }
@@ -171,7 +176,7 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin) {
   // log_info(density_log);
   // log_info("kinetic enegry matrix:");
   // log_info(kinetic_energy_log);
-  // log_info("finished initializing spin_cluster");
+  log_info("finished initializing spin_cluster");
 }
 
 //========================================================================================
