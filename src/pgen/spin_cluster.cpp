@@ -54,11 +54,11 @@ void Grav(MeshBlock *pmb, const Real time, const Real dt,
     Real x = pmb->pcoord->x1v(i);
     Real y = pmb->pcoord->x2v(j);
     Real z = pmb->pcoord->x3v(k);
-    Real den = u(IDN,k,j,i);
+    Real den = prim(IDN,k,j,i);
     Real rad = std::sqrt(SQR(x - x0) + SQR(y - y0) + SQR(z - z0));
     Real tot_mass = pow(10.0,5.0);
 
-    dPhi = (G*tot_mass)/pow(rad+scale_length, 2.0);
+    Real dPhi = (G*tot_mass)/pow(rad+scale_length, 2.0);
     Real force = -dPhi*den;
     Real dMomentum = force*dt;
     cons(IM1,k,j,i) += dMomentum*x/rad;
@@ -162,11 +162,11 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin) {
       kinetic_energy_log += "\n";
   }
   }}
-  log_info("density matrix:");
-  log_info(density_log);
-  log_info("kinetic enegry matrix:");
-  log_info(kinetic_energy_log);
-  log_info("finished initializing spin_cluster");
+  // log_info("density matrix:");
+  // log_info(density_log);
+  // log_info("kinetic enegry matrix:");
+  // log_info(kinetic_energy_log);
+  // log_info("finished initializing spin_cluster");
 }
 
 //========================================================================================
