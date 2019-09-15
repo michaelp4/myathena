@@ -39,16 +39,20 @@ void Grav(MeshBlock *pmb, const Real time, const Real dt,
               AthenaArray<Real> &cons) {
   // Setting the Gravitational constant
   Real G = 0.00430091; // Units: pc (parsec) / solar mass * (km/s)^2
-  Real x0   = pin->GetOrAddReal("problem","x1_0",0.0);
-  Real y0   = pin->GetOrAddReal("problem","x2_0",0.0);
-  Real z0   = pin->GetOrAddReal("problem","x3_0",0.0);
+
+  // Real x0   = pin->GetOrAddReal("problem","x1_0",0.0);
+  // Real y0   = pin->GetOrAddReal("problem","x2_0",0.0);
+  // Real z0   = pin->GetOrAddReal("problem","x3_0",0.0);
+  Real x0   = 0.0;
+  Real y0   = 0.0;
+  Real z0   = 0.0;
 
   for (int k=pmb->ks; k<=pmb->ke; k++) {
   for (int j=pmb->js; j<=pmb->je; j++) {
   for (int i=pmb->is; i<=pmb->ie; i++) {
-    Real x = pcoord->x1v(i);
-    Real y = pcoord->x2v(j);
-    Real z = pcoord->x3v(k);
+    Real x = pmb->coord->x1v(i);
+    Real y = pmb->coord->x2v(j);
+    Real z = pmb->coord->x3v(k);
     Real den = u(IDN,k,j,i);
     Real rad = std::sqrt(SQR(x - x0) + SQR(y - y0) + SQR(z - z0));
     cons(IM3,k,j,i) -= dt*G*den/SQR(rad);
