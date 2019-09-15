@@ -81,9 +81,10 @@ void Grav(MeshBlock *pmb, const Real time, const Real dt,
 
 void Mesh::InitUserMeshData(ParameterInput *pin) {
   std::cout<<std::endl<<"***in InitUserMeshData***"<<std::endl;
-  std::cout<<std::endl<<"add grav:"<<pin->GetOrAddReal("problem","add_grav", false)<<std::endl;
+  std::cout<<std::endl<<"add grav:"<<pin->GetOrAddReal("problem","add_grav", true)<<std::endl;
+  std::cout<<std::endl<<"add grav:"<<pin->GetOrAddReal("problem","add_grav", true)<<std::endl;
 
-  if(pin->GetOrAddReal("problem","add_grav", false)) {
+  if(pin->GetOrAddReal("problem","add_grav", true)) {
     std::cout<<std::endl<<"calling EnrollUserExplicitSourceFunction"<<std::endl;
     EnrollUserExplicitSourceFunction(Grav);
   }
@@ -106,6 +107,9 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin) {
   Real rout = pin->GetReal("problem","radius");
   Real rin  = rout - pin->GetOrAddReal("problem","ramp",0.0);
   Real pa   = pin->GetOrAddReal("problem","pamb",1.0);
+  
+  log_info("pamp:" + std::to_string(pa));
+  
   Real da   = pin->GetOrAddReal("problem","damb",1.0);
   Real prat = pin->GetReal("problem","prat");
   Real drat = pin->GetOrAddReal("problem","drat",1.0);
