@@ -68,6 +68,11 @@ void Grav(MeshBlock *pmb, const Real time, const Real dt,
     Real velocity_y = cons(IM2,k,j,i) / den;
     Real velocity_z = cons(IM3,k,j,i) / den;
     cons(IEN,k,j,i) += cons(IM1,k,j,i)*velocity_x+cons(IM2,k,j,i)*velocity_y+cons(IM3,k,j,i)*velocity_z;
+    std::cout<<std::endl<<"***in Grav calced params:***"<<std::endl;
+    std::cout<<std::endl<<"momentum1:"<<cons(IM1,k,j,i)<<std::endl;
+    std::cout<<std::endl<<"momentum2:"<<cons(IM2,k,j,i)<<std::endl;
+    std::cout<<std::endl<<"momentum3:"<<cons(IM3,k,j,i)<<std::endl;
+
     // cons(IM3,k,j,i) -= dt*G*den/SQR(rad);
     // cons(IEN,k,j,i) -= dt*G*den/SQR(rad)*cons(IM3,k,j,i);
   }}}
