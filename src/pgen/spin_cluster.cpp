@@ -39,6 +39,7 @@ void Grav(MeshBlock *pmb, const Real time, const Real dt,
               AthenaArray<Real> &cons) {
   // Setting the Gravitational constant
   Real G = 0.00430091; // Units: pc (parsec) / solar mass * (km/s)^2
+  Real scale_length = 676;
 
   // Real x0   = pin->GetOrAddReal("problem","x1_0",0.0);
   // Real y0   = pin->GetOrAddReal("problem","x2_0",0.0);
@@ -50,13 +51,25 @@ void Grav(MeshBlock *pmb, const Real time, const Real dt,
   for (int k=pmb->ks; k<=pmb->ke; k++) {
   for (int j=pmb->js; j<=pmb->je; j++) {
   for (int i=pmb->is; i<=pmb->ie; i++) {
-    Real x = pmb->coord->x1v(i);
-    Real y = pmb->coord->x2v(j);
-    Real z = pmb->coord->x3v(k);
+    Real x = pmb->pcoord->x1v(i);
+    Real y = pmb->pcoord->x2v(j);
+    Real z = pmb->pcoord->x3v(k);
     Real den = u(IDN,k,j,i);
     Real rad = std::sqrt(SQR(x - x0) + SQR(y - y0) + SQR(z - z0));
-    cons(IM3,k,j,i) -= dt*G*den/SQR(rad);
-    cons(IEN,k,j,i) -= dt*G*den/SQR(rad)*cons(IM3,k,j,i);
+    Real tot_mass = pow(10.0,5.0);
+
+    dPhi = (G*tot_mass)/pow(rad+scale_length, 2.0);
+    Real force = -dPhi*den;
+    Real dMomentum = force*dt;
+    cons(IM1,k,j,i) += dMomentum*x/rad;
+    cons(IM2,k,j,i) += dMomentum*y/rad;
+    cons(IM3,k,j,i) += dMomentum*z/rad;
+    Real velocity_x = cons(IM1,k,j,i) / den;
+    Real velocity_y = cons(IM2,k,j,i) / den;
+    Real velocity_z = cons(IM3,k,j,i) / den;
+    cons(IEN,k,j,i) += cons(IM1,k,j,i)*velocity_x+cons(IM2,k,j,i)*velocity_y+cons(IM3,k,j,i)*velocity_z;
+    // cons(IM3,k,j,i) -= dt*G*den/SQR(rad);
+    // cons(IEN,k,j,i) -= dt*G*den/SQR(rad)*cons(IM3,k,j,i);
   }}}
 }
 
