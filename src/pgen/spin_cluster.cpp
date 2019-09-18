@@ -34,8 +34,8 @@ void MeshBlock::log_info(std::string msg)
 }
 
 void TemperatureCondition(MeshBlock *pmb, const Real time, const Real dt,
-                   const AthenaArray<Real> &prim, const AthenaArray<Real> &bcc,
-                   AthenaArray<Real> &cons)
+                          const AthenaArray<Real> &prim, const AthenaArray<Real> &bcc,
+                          AthenaArray<Real> &cons)
 {
   Real numerator = 0;
   Real denominator = 0;
@@ -58,7 +58,7 @@ void TemperatureCondition(MeshBlock *pmb, const Real time, const Real dt,
   if (denominator != 0)
   {
     // if the average of the temprature is under 100 eV end the simulation
-    if(numerator/denominator < 100)
+    if (numerator / denominator < 100)
     {
       exit;
     }
@@ -74,13 +74,6 @@ void Grav(MeshBlock *pmb, const Real time, const Real dt,
   Real G = 0.00430091; // Units: pc (parsec) / solar mass * (km/s)^2
   Real scale_length = 676;
 
-  // TODO: remove this
-  std::cout <<"array size: "<<std::to_string(prim.GetSize());
-  std::cout <<"array dim1: "<<std::to_string(prim.GetDim1());
-  for (int i = prim.GetSize() - 1; i >= 0; i--) 
-    std::cout << prim[i];
-  //end remove
-
   // Real x0   = pin->GetOrAddReal("problem","x1_0",0.0);
   // Real y0   = pin->GetOrAddReal("problem","x2_0",0.0);
   // Real z0   = pin->GetOrAddReal("problem","x3_0",0.0);
@@ -94,6 +87,15 @@ void Grav(MeshBlock *pmb, const Real time, const Real dt,
     {
       for (int i = pmb->is; i <= pmb->ie; i++)
       {
+
+        // TODO: remove this
+        std::cout << "array size: " << std::to_string(prim.GetSize());
+        std::cout << "array dim1: " << std::to_string(prim.GetDim1());
+        for (int in = prim.GetSize() - 1; in >= 0; in--)
+          std::cout << prim(in, k, j, i);
+        std::cout << "*****";
+        //end remove
+
         Real x = pmb->pcoord->x1v(i);
         Real y = pmb->pcoord->x2v(j);
         Real z = pmb->pcoord->x3v(k);
