@@ -91,16 +91,16 @@ void Grav(MeshBlock *pmb, const Real time, const Real dt,
       {
 
         // TODO: remove this
-        try{
-          std::cout << "in try";
+        // try{
+        //   std::cout << "in try";
           std::cout << "array size: " << std::to_string(prim.GetSize());
           std::cout << "array dim1: " << std::to_string(prim.GetDim1());
           for (int in = prim.GetSize() - 1; in >= 0; in--)
             std::cout << prim(in, k, j, i);
           std::cout << "*****";
-        } catch(...) {
-          std::cout << "there was an error";
-        }
+        // } catch(...) {
+        //   std::cout << "there was an error";
+        // }
         //end remove
 
         Real x = pmb->pcoord->x1v(i);
