@@ -143,7 +143,7 @@ void Mesh::InitUserMeshData(ParameterInput *pin)
   }
   if (pin->GetOrAddReal("problem", "add_temperature_condition", false))
   {
-    EnrollUserExplicitSourceFunction(TemperatureCondition);
+    // EnrollUserExplicitSourceFunction(TemperatureCondition);
   }
 }
 
