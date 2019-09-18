@@ -11,7 +11,7 @@
 namespace Globals {
   extern int my_rank, nranks;
   // Main loop runnint
-  extern bool isRunning;
+  extern bool is_running;
 }
 
 #endif // GLOBALS_HPP_
