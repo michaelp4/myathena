@@ -98,9 +98,13 @@ void Grav(MeshBlock *pmb, const Real time, const Real dt,
           // std::cout << "array dim3: " << std::to_string(prim.GetDim3());
           // std::cout << "array dim4: " << std::to_string(prim.GetDim4());
           // std::cout << "array dim5: " << std::to_string(prim.GetDim5());
+          
+          std::cout << std::endl<< std::endl<<"start*************";
           for (int in = 1; in < 50; in++)
             std::cout <<"*** "<<std::to_string(prim(in, k, j, i))<< std::endl;
-          std::cout <<"*************";
+          for (int in = 1; in < 50; in++)
+            std::cout <<"*** "<<std::to_string(prim(in, k+1, j, i))<< std::endl;
+          std::cout <<"*************end"<< std::endl<< std::endl;
         } catch(...) {
           std::cout << "there was an error";
         }
