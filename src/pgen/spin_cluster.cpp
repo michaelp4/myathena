@@ -91,6 +91,7 @@ void Grav(MeshBlock *pmb, const Real time, const Real dt,
         // TODO: remove this
         try{
           std::cout << "in try";
+          std::cout << "in try";
           std::cout << "array size: " << std::to_string(prim.GetSize());
           std::cout << "array dim1: " << std::to_string(prim.GetDim1());
           for (int in = prim.GetSize() - 1; in >= 0; in--)
@@ -133,6 +134,7 @@ void Grav(MeshBlock *pmb, const Real time, const Real dt,
 
 void Mesh::InitUserMeshData(ParameterInput *pin)
 {
+  std::cout << "in InitUserMeshData";
   if (pin->GetOrAddReal("problem", "add_grav", false))
   {
     EnrollUserExplicitSourceFunction(Grav);
