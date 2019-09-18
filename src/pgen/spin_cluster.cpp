@@ -137,6 +137,7 @@ void Mesh::InitUserMeshData(ParameterInput *pin)
   std::cout << "in InitUserMeshData";
   if (pin->GetOrAddReal("problem", "add_grav", false))
   {
+    std::cout << "added grav";
     EnrollUserExplicitSourceFunction(Grav);
   }
   if (pin->GetOrAddReal("problem", "add_temperature_condition", false))
