@@ -103,6 +103,7 @@ void Grav(MeshBlock *pmb, const Real time, const Real dt,
           for (int in = 1; in < 50; in++)
             std::cout <<"*** "<<std::to_string(prim(in, k, j, i))<< std::endl;
           for (int in = 1; in < 50; in++)
+          std::cout <<"*************this is it:   ";
             std::cout <<"*** "<<std::to_string(prim(in, k+1, j, i))<< std::endl;
           std::cout <<"*************end"<< std::endl<< std::endl;
         } catch(...) {
