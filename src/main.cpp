@@ -373,9 +373,9 @@ int main(int argc, char *argv[]) {
 #ifdef OPENMP_PARALLEL
   double omp_start_time = omp_get_wtime();
 #endif
-
+  Globals::is_running = true;
   while ((pmesh->time < pmesh->tlim) &&
-         (pmesh->nlim < 0 || pmesh->ncycle < pmesh->nlim)) {
+         (pmesh->nlim < 0 || pmesh->ncycle < pmesh->nlim) && Globals::is_running) {
 
     if (Globals::my_rank==0) {
       if (pmesh->ncycle_out != 0) {

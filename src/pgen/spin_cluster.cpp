@@ -52,9 +52,9 @@ void TemperatureCondition(MeshBlock *pmb, const Real time, const Real dt,
         Real y = pmb->pcoord->x2v(j);
         Real z = pmb->pcoord->x3v(k);
         Real den = prim(IDN, k, j, i);
-        // Real temperature = prim(PR,i,j,k)/den*69.56;
-        // numerator += temperature*den;
-        // denominator += den;
+        Real temperature = 2/3*prim(IEN,k,j,i)/prim(IDN,k,j,i);        
+        numerator += temperature*den;
+        denominator += den;
       }
     }
   }
@@ -62,7 +62,7 @@ void TemperatureCondition(MeshBlock *pmb, const Real time, const Real dt,
     // if the average of the temprature is under 100 eV end the simulation
     if (numerator / denominator < 100)
     {
-      //
+      Globals::is_running = false;
     }
   } catch(...){
     std::cout<<"***error in temperature check***";
@@ -89,28 +89,6 @@ void Grav(MeshBlock *pmb, const Real time, const Real dt,
     {
       for (int i = pmb->is; i <= pmb->ie; i++)
       {
-
-        // TODO: remove this
-        try{
-          // std::cout << "array size: " << std::to_string(prim.GetSize());
-          // std::cout << "array dim1: " << std::to_string(prim.GetDim1());
-          // std::cout << "array dim2: " << std::to_string(prim.GetDim2());
-          // std::cout << "array dim3: " << std::to_string(prim.GetDim3());
-          // std::cout << "array dim4: " << std::to_string(prim.GetDim4());
-          // std::cout << "array dim5: " << std::to_string(prim.GetDim5());
-          
-          std::cout << std::endl<< std::endl<<"start*************";
-          for (int in = 1; in < 50; in++)
-            std::cout <<"*** "<<std::to_string(prim(in, k, j, i))<< std::endl;
-          std::cout <<"*************this is it:   ";
-          for (int in = 1; in < 50; in++)
-            std::cout <<"*** "<<std::to_string(prim(in, k+1, j, i))<< std::endl;
-          std::cout <<"*************end"<< std::endl<< std::endl;
-        } catch(...) {
-          std::cout << "there was an error";
-        }
-        //end remove
-
         Real x = pmb->pcoord->x1v(i);
         Real y = pmb->pcoord->x2v(j);
         Real z = pmb->pcoord->x3v(k);
@@ -149,7 +127,7 @@ void Mesh::InitUserMeshData(ParameterInput *pin)
   }
   if (pin->GetOrAddReal("problem", "add_temperature_condition", false))
   {
-    // EnrollUserExplicitSourceFunction(TemperatureCondition);
+    EnrollUserExplicitSourceFunction(TemperatureCondition);
   }
 }
 
