@@ -93,7 +93,11 @@ void Grav(MeshBlock *pmb, const Real time, const Real dt,
         // TODO: remove this
         try{
           std::cout << "array size: " << std::to_string(prim.GetSize());
-          // std::cout << "array dim1: " << std::to_string(prim.GetDim1());
+          std::cout << "array dim1: " << std::to_string(prim.GetDim1());
+          std::cout << "array dim2: " << std::to_string(prim.GetDim2());
+          std::cout << "array dim3: " << std::to_string(prim.GetDim3());
+          std::cout << "array dim4: " << std::to_string(prim.GetDim4());
+          std::cout << "array dim5: " << std::to_string(prim.GetDim5());
           // for (int in = prim.GetSize() - 1; in >= 0; in--)
           //   std::cout << prim(in, k, j, i);
           // std::cout << "*****";
