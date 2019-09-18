@@ -25,7 +25,9 @@
 #include "../hydro/hydro.hpp"
 #include "../mesh/mesh.hpp"
 #include "../parameter_input.hpp"
-
+void Grav(MeshBlock *pmb, const Real time, const Real dt,
+          const AthenaArray<Real> &prim, const AthenaArray<Real> &bcc,
+          AthenaArray<Real> &cons);
 void MeshBlock::log_info(std::string msg)
 {
   if (log_on)
@@ -134,10 +136,8 @@ void Grav(MeshBlock *pmb, const Real time, const Real dt,
 
 void Mesh::InitUserMeshData(ParameterInput *pin)
 {
-  std::cout << "in InitUserMeshData";
   if (pin->GetOrAddReal("problem", "add_grav", false))
   {
-    std::cout << "added grav";
     EnrollUserExplicitSourceFunction(Grav);
   }
   if (pin->GetOrAddReal("problem", "add_temperature_condition", false))
@@ -244,7 +244,7 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin)
   // log_info(density_log);
   // log_info("kinetic enegry matrix:");
   // log_info(kinetic_energy_log);
-  log_info("finished initializing spin_cluster");
+  // log_info("finished initializing spin_cluster");
 }
 
 //========================================================================================
