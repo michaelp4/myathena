@@ -89,11 +89,15 @@ void Grav(MeshBlock *pmb, const Real time, const Real dt,
       {
 
         // TODO: remove this
-        std::cout << "array size: " << std::to_string(prim.GetSize());
-        std::cout << "array dim1: " << std::to_string(prim.GetDim1());
-        for (int in = prim.GetSize() - 1; in >= 0; in--)
-          std::cout << prim(in, k, j, i);
-        std::cout << "*****";
+        try{
+          std::cout << "array size: " << std::to_string(prim.GetSize());
+          std::cout << "array dim1: " << std::to_string(prim.GetDim1());
+          for (int in = prim.GetSize() - 1; in >= 0; in--)
+            std::cout << prim(in, k, j, i);
+          std::cout << "*****";
+        } catch(...) {
+          std::cout << "there was an error";
+        }
         //end remove
 
         Real x = pmb->pcoord->x1v(i);
@@ -156,9 +160,6 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin)
   Real rout = pin->GetReal("problem", "radius");
   Real rin = rout - pin->GetOrAddReal("problem", "ramp", 0.0);
   Real pa = pin->GetOrAddReal("problem", "pamb", 1.0);
-
-  log_info("pamp:" + std::to_string(pa));
-
   Real da = pin->GetOrAddReal("problem", "damb", 1.0);
   Real prat = pin->GetReal("problem", "prat");
   Real drat = pin->GetOrAddReal("problem", "drat", 1.0);
