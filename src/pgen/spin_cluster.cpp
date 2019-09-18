@@ -68,7 +68,7 @@ void Grav(MeshBlock *pmb, const Real time, const Real dt,
           const AthenaArray<Real> &prim, const AthenaArray<Real> &bcc,
           AthenaArray<Real> &cons)
 {
-  // std::cout<<std::endl<<"***in Grav calced params:***"<<std::endl;
+  std::cout<<std::endl<<"***in Grav:***"<<std::endl;
 
   // Setting the Gravitational constant
   Real G = 0.00430091; // Units: pc (parsec) / solar mass * (km/s)^2
