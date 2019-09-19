@@ -56,7 +56,7 @@ void TemperatureCondition(MeshBlock *pmb, const Real time, const Real dt,
           << "*** energy: " + std::to_string(prim(IEN,k,j,i)) + " ***" << std::endl;
         std::cout << std::endl
           << "*** dencity: " + std::to_string(prim(IDN,k,j,i)) + " ***" << std::endl;
-        Real temperature = 2/3*prim(IEN,k,j,i)/prim(IDN,k,j,i);        
+        Real temperature = 2.0/3.0*prim(IEN,k,j,i)/prim(IDN,k,j,i);        
         std::cout << std::endl
           << "*** temperature: " + std::to_string(temperature) + " ***" << std::endl;
         numerator += temperature*den;
