@@ -52,20 +52,24 @@ void TemperatureCondition(MeshBlock *pmb, const Real time, const Real dt,
         Real y = pmb->pcoord->x2v(j);
         Real z = pmb->pcoord->x3v(k);
         Real den = prim(IDN, k, j, i);
-        Real temperature = 2.0/3.0*prim(IEN,k,j,i)/prim(IDN,k,j,i);
-        numerator += temperature*den;
+        Real temperature = 2.0 / 3.0 * prim(IEN, k, j, i) / prim(IDN, k, j, i);
+        numerator += temperature * den;
         denominator += den;
       }
     }
   }
-  try{
+  try
+  {
+    std::cout << "***temprature average:" << std::to_string(numerator / denominator) << "***" << std::endl;
     // if the average of the temprature is under 100 eV end the simulation
     if (numerator / denominator < 100)
     {
       Globals::is_running = false;
     }
-  } catch(...){
-    std::cout<<"***error in temperature check***";
+  }
+  catch (...)
+  {
+    std::cout << "***error in temperature check***";
   }
 }
 void Grav(MeshBlock *pmb, const Real time, const Real dt,
