@@ -52,17 +52,9 @@ void TemperatureCondition(MeshBlock *pmb, const Real time, const Real dt,
         Real y = pmb->pcoord->x2v(j);
         Real z = pmb->pcoord->x3v(k);
         Real den = prim(IDN, k, j, i);
-        std::cout << std::endl
-          << "*** energy: " + std::to_string(prim(IEN,k,j,i)) + " ***" << std::endl;
-        std::cout << std::endl
-          << "*** dencity: " + std::to_string(prim(IDN,k,j,i)) + " ***" << std::endl;
-        Real temperature = 2.0/3.0*prim(IEN,k,j,i)/prim(IDN,k,j,i);        
-        std::cout << std::endl
-          << "*** temperature: " + std::to_string(temperature) + " ***" << std::endl;
+        Real temperature = 2.0/3.0*prim(IEN,k,j,i)/prim(IDN,k,j,i);
         numerator += temperature*den;
         denominator += den;
-        std::cout << std::endl
-          << "*** numerator: " + std::to_string(numerator) + " ***" << std::endl;
       }
     }
   }
@@ -189,8 +181,8 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin)
     throw std::runtime_error(msg.str().c_str());
   }
   // log stuff intialization
-  std::string density_log = "";
-  std::string kinetic_energy_log = "";
+  // std::string density_log = "";
+  // std::string kinetic_energy_log = "";
 
   // setup uniform ambient medium with spherical over-pressured region
   for (int k = ks; k <= ke; k++)
@@ -219,18 +211,19 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin)
         phydro->u(IM2, k, j, i) = angular_velocity * x;
         phydro->u(IM3, k, j, i) = 0.0;
         phydro->u(IEN, k, j, i) = kinetic_energy;
-
-        if (k == ks)
-        {
-          density_log += std::to_string(den) + ",";
-          kinetic_energy_log += std::to_string(kinetic_energy) + ",";
-        }
+        // logs
+        // if (k == ks)
+        // {
+        //   density_log += std::to_string(den) + ",";
+        //   kinetic_energy_log += std::to_string(kinetic_energy) + ",";
+        // }
       }
-      if (k == ks)
-      {
-        density_log += "\n";
-        kinetic_energy_log += "\n";
-      }
+      // logs
+      // if (k == ks)
+      // {
+      //   density_log += "\n";
+      //   kinetic_energy_log += "\n";
+      // }
     }
   }
   // log_info("density matrix:");
