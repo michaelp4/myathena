@@ -40,8 +40,8 @@ void TemperatureCondition(MeshBlock *pmb, const Real time, const Real dt,
                           const AthenaArray<Real> &prim, const AthenaArray<Real> &bcc,
                           AthenaArray<Real> &cons)
 {
-  Real numerator = 0;
-  Real denominator = 0;
+  Real numerator = 0.0;
+  Real denominator = 0.0;
   for (int k = pmb->ks; k <= pmb->ke; k++)
   {
     for (int j = pmb->js; j <= pmb->je; j++)
@@ -57,6 +57,8 @@ void TemperatureCondition(MeshBlock *pmb, const Real time, const Real dt,
         std::cout << std::endl
           << "*** dencity: " + std::to_string(prim(IDN,k,j,i)) + " ***" << std::endl;
         Real temperature = 2/3*prim(IEN,k,j,i)/prim(IDN,k,j,i);        
+        std::cout << std::endl
+          << "*** temperature: " + std::to_string(temperature) + " ***" << std::endl;
         numerator += temperature*den;
         denominator += den;
         std::cout << std::endl
