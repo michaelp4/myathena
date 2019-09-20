@@ -35,6 +35,12 @@ void MeshBlock::log_info(std::string msg)
     std::cout << std::endl
               << "*** " + msg + " ***" << std::endl;
 }
+void log_info_pmb(MeshBlock *pmb, std::string msg)
+{
+  if (pmb->log_on)
+    std::cout << std::endl
+              << "*** " + msg + " ***" << std::endl;
+}
 
 void TemperatureCondition(MeshBlock *pmb, const Real time, const Real dt,
                           const AthenaArray<Real> &prim, const AthenaArray<Real> &bcc,
@@ -127,10 +133,12 @@ void Mesh::InitUserMeshData(ParameterInput *pin)
 {
   if (pin->GetOrAddReal("problem", "add_grav", false))
   {
+    log_info_pmb(pblock, "*** Grav function was added ***");
     EnrollUserExplicitSourceFunction(Grav);
   }
   if (pin->GetOrAddReal("problem", "add_temperature_condition", false))
   {
+    log_info_pmb(pblock, "*** TemperatureCondition function was added ***");
     EnrollUserExplicitSourceFunction(TemperatureCondition);
   }
 }

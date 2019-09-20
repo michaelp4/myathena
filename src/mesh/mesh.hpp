@@ -112,11 +112,11 @@ public:
   void UserWorkInLoop(void); // in ../pgen
   void InitUserMeshBlockData(ParameterInput *pin); // in ../pgen
   void UserWorkBeforeOutput(ParameterInput *pin); // in ../pgen
-
-private:
-  // mine
+  // logging
   bool log_on = true;
   void log_info(std::string msg);
+
+private:
   // data
   Real cost;
   Real new_block_dt;
