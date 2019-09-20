@@ -374,8 +374,8 @@ int main(int argc, char *argv[]) {
   double omp_start_time = omp_get_wtime();
 #endif
   Globals::is_running = true;
-  while ((pmesh->time < pmesh->tlim) &&
-         (pmesh->nlim < 0 || pmesh->ncycle < pmesh->nlim) && Globals::is_running) {
+  while (((pmesh->time < pmesh->tlim) &&
+         (pmesh->nlim < 0 || pmesh->ncycle < pmesh->nlim)) && Globals::is_running) {
 
     if (Globals::my_rank==0) {
       if (pmesh->ncycle_out != 0) {

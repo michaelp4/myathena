@@ -25,6 +25,8 @@
 #include "../hydro/hydro.hpp"
 #include "../mesh/mesh.hpp"
 #include "../parameter_input.hpp"
+
+bool _log_on = false;
 void Grav(MeshBlock *pmb, const Real time, const Real dt,
           const AthenaArray<Real> &prim, const AthenaArray<Real> &bcc,
           AthenaArray<Real> &cons);
@@ -37,7 +39,8 @@ void MeshBlock::log_info(std::string msg)
 }
 void log_info_pmb(MeshBlock *pmb, std::string msg)
 {
-  if (pmb->log_on)
+  // if (pmb->log_on)
+  if (_log_on)
     std::cout << std::endl
               << "*** " + msg + " ***" << std::endl;
 }
@@ -154,6 +157,7 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin)
   Real G = 0.00430091 * pow(10.0, 7.0); // Units: kpc (kilo parsec) / 10^10 solar mass * (km/s)^2
 
   log_on = pin->GetOrAddBoolean("problem", "log_on", true);
+  _log_on = log_on;
   Real tot_mass = pin->GetOrAddReal("problem", "tot_mass", pow(10.0, 5.0));
   Real scale_length = pin->GetOrAddReal("problem", "scale_length", 676);
   Real angular_velocity = pin->GetOrAddReal("problem", "angular_velocity", 0.0);
