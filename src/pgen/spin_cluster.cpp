@@ -37,7 +37,7 @@ void MeshBlock::log_info(std::string msg)
 }
 void log_info_pmb(MeshBlock *pmb, std::string msg)
 {
-  if (pmb->log_on)
+  // if (pmb->log_on)
     std::cout << std::endl
               << "*** " + msg + " ***" << std::endl;
 }
