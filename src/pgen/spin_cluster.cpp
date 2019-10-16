@@ -87,7 +87,7 @@ void Grav(MeshBlock *pmb, const Real time, const Real dt,
           AthenaArray<Real> &cons)
 {
   // Setting the Gravitational constant
-  Real G = 0.00430091; // Units: pc (parsec) / solar mass * (km/s)^2
+  Real G = 0.00430091 * pow(10.0, 7.0); // Units: pc (parsec) / solar mass * (km/s)^2
   Real scale_length = 676;
 
   // Real x0   = pin->GetOrAddReal("problem","x1_0",0.0);
