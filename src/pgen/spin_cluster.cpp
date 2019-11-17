@@ -220,12 +220,12 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin)
         Real den = (tot_mass / (2 * PI)) * (scale_length / rad) * (1 / pow(rad + scale_length, 3.0));
         phydro->u(IDN, k, j, i) = den;
         Real rad_to_scale_ratio = rad / scale_length;
-        Real radial_velocity_avg_squared = (G * tot_mass / (12 * scale_length)) * ((12 * rad * pow(rad + scale_length, 3.0) / pow(scale_length, 4.0)) * log((rad + scale_length) / rad) - rad / (rad + scale_length) * (25 + 52 * rad_to_scale_ratio + 42 * pow(rad_to_scale_ratio, 2.0) + 12 * pow(rad_to_scale_ratio, 3.0)));
+        Real radial_velocity_avg_squared = ((G * tot_mass) / (12 * scale_length)) * ((12 * rad * pow(rad + scale_length, 3.0) / pow(scale_length, 4.0)) * log((rad + scale_length) / rad) - (rad / (rad + scale_length)) * (25 + 52 * rad_to_scale_ratio + 42 * pow(rad_to_scale_ratio, 2.0) + 12 * pow(rad_to_scale_ratio, 3.0)));
         Real pressure = den * radial_velocity_avg_squared;
-        Real velocity_squared = 0; // TODO: change
-        Real kinetic_energy = pressure / gm1 + 0.5 * den * velocity_squared;
-        phydro->u(IM1, k, j, i) = angular_velocity * y;
-        phydro->u(IM2, k, j, i) = angular_velocity * x;
+        // Real velocity_squared = pow(angular_velocity * y, 2.0)+ pow(angular_velocity * y, 2.0);
+        Real kinetic_energy = pressure / gm1 + 0.5 * den * radial_velocity_avg_squared;
+        phydro->u(IM1, k, j, i) = - angular_velocity * y * den;
+        phydro->u(IM2, k, j, i) = angular_velocity * x * den;
         phydro->u(IM3, k, j, i) = 0.0;
         phydro->u(IEN, k, j, i) = kinetic_energy;
         // logs
