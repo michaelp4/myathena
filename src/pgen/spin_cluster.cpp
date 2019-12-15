@@ -112,8 +112,8 @@ void Grav(MeshBlock *pmb, const Real time, const Real dt,
         Real tot_mass = pow(10.0, 5.0);
 
         Real dPhi = (G * tot_mass) / pow(rad + scale_length, 2.0);
-        Real force = -dPhi * den;
-        Real dMomentum = force * dt;
+        Real force = -dPhi * den;// adding times 2 to check
+        Real dMomentum = force * dt * 5;
         Real dIM1 = dMomentum * x / rad;
         Real dIM2 = dMomentum * y / rad;
         Real dIM3 = dMomentum * z / rad;
