@@ -86,7 +86,6 @@ void Grav(MeshBlock *pmb, const Real time, const Real dt,
           const AthenaArray<Real> &prim, const AthenaArray<Real> &bcc,
           AthenaArray<Real> &cons)
 {
-  std::cout << "***the grav function is called***";
 
   // Setting the Gravitational constant
   Real G = 0.00430091 * pow(10.0, 7.0); // Units: pc (parsec) / solar mass * (km/s)^2
@@ -121,9 +120,9 @@ void Grav(MeshBlock *pmb, const Real time, const Real dt,
         cons(IM1, k, j, i) += dIM1;
         cons(IM2, k, j, i) += dIM2;
         cons(IM3, k, j, i) += dIM3;
-        Real velocity_x = cons(IM1, k, j, i) / den;
-        Real velocity_y = cons(IM2, k, j, i) / den;
-        Real velocity_z = cons(IM3, k, j, i) / den;
+        Real velocity_x = prim(IVX, k, j, i);
+        Real velocity_y = prim(IVY, k, j, i);
+        Real velocity_z = prim(IVZ, k, j, i);
         cons(IEN, k, j, i) += dIM1 * velocity_x + dIM2 * velocity_y + dIM3 * velocity_z;
 
         // logs:
@@ -222,7 +221,10 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin)
         Real den = (tot_mass / (2 * PI)) * (scale_length / rad) * (1 / pow(rad + scale_length, 3.0))*0.17;
         phydro->u(IDN, k, j, i) = den;
         Real rad_to_scale_ratio = rad / scale_length;
-        Real radial_velocity_avg_squared = ((G * tot_mass) / (12 * scale_length)) * ((12 * rad * pow(rad + scale_length, 3.0) / pow(scale_length, 4.0)) * log((rad + scale_length) / rad) - (rad / (rad + scale_length)) * (25 + 52 * rad_to_scale_ratio + 42 * pow(rad_to_scale_ratio, 2.0) + 12 * pow(rad_to_scale_ratio, 3.0)));
+        Real radial_velocity_avg_squared = ((G * tot_mass) / (12 * scale_length)) * 
+        ((12 * rad * pow(rad + scale_length, 3.0) / pow(scale_length, 4.0)) * log((rad + scale_length) / rad) - 
+        (rad / (rad + scale_length)) * (25 + 52 * rad_to_scale_ratio + 42 * pow(rad_to_scale_ratio, 2.0) + 12 * 
+        pow(rad_to_scale_ratio, 3.0)));
         Real pressure = den * radial_velocity_avg_squared;
         Real velocity_squared = pow(angular_velocity * x, 2.0)+ pow(angular_velocity * y, 2.0);
         Real kinetic_energy = pressure / gm1 + 0.5 * den * velocity_squared;
