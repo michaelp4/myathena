@@ -114,9 +114,6 @@ public:
   void UserWorkBeforeOutput(ParameterInput *pin); // in ../pgen
 
 private:
-  // logging
-  bool log_on = true;
-  void log_info(std::string msg);
   // data
   Real cost;
   Real new_block_dt;

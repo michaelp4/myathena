@@ -24,6 +24,7 @@
 
 Hydro::Hydro(MeshBlock *pmb, ParameterInput *pin) {
   pmy_block = pmb;
+  this->pin = pin;
 
   // Allocate memory for primitive/conserved variables
   int ncells1 = pmy_block->block_size.nx1 + 2*(NGHOST);

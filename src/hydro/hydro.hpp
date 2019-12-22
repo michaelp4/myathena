@@ -30,6 +30,7 @@ public:
 
   // data
   MeshBlock* pmy_block;    // ptr to MeshBlock containing this Hydro
+  ParameterInput *pin;
   // conserved and primitive variables
   AthenaArray<Real> u,w;      // time-integrator memory register #1
   AthenaArray<Real> u1,w1;    // time-integrator memory register #2
