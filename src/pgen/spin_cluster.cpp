@@ -75,10 +75,9 @@ void SpinSourceFunction(MeshBlock *pmb, const Real time, const Real dt,
   Real x0   = pin->GetOrAddReal("problem","x1_0",0.0);
   Real y0   = pin->GetOrAddReal("problem","x2_0",0.0);
   Real z0   = pin->GetOrAddReal("problem","x3_0",0.0);
-  Real* numerator;
-  Real* denominator;
-  *numerator = 0.0;
-  *denominator = 0.0;
+  Real *numerator, *denominator, n = 0.0, d = 0.0;
+  numerator = &n;
+  denominator = &d;
 
   Real add_grav = pin->GetOrAddReal("problem", "add_grav", false);
   Real add_temerature_condition = pin->GetOrAddReal("problem", "add_temperature_condition", false);
@@ -138,6 +137,7 @@ void SpinSourceFunction(MeshBlock *pmb, const Real time, const Real dt,
 
 void Mesh::InitUserMeshData(ParameterInput *pin)
 {
+  log_info(pin, "before adding source function");
   EnrollUserExplicitSourceFunction(SpinSourceFunction);
 }
 
