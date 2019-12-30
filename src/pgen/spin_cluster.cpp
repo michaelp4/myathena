@@ -134,7 +134,7 @@ void SpinSourceFunction(MeshBlock *pmb, const Real time, const Real dt,
 
 void Mesh::InitUserMeshData(ParameterInput *pin)
 {
-  EnrollUserExplicitSourceFunction(SpinSourceFunction);
+  // EnrollUserExplicitSourceFunction(SpinSourceFunction);
 }
 
 //========================================================================================
