@@ -67,8 +67,8 @@ void SpinSourceFunction(MeshBlock *pmb, const Real time, const Real dt,
           AthenaArray<Real> &cons){
   // Setting the Gravitational constant
   Real G = 0.00430091 * pow(10.0, 7.0); // Units: pc (parsec) / solar mass * (km/s)^2
-
   ParameterInput *pin =pmb->phydro->pin;
+  log_info(pin, "entered spin source function");
   Real tot_mass = pin->GetOrAddReal("problem", "tot_mass", pow(10.0, 5.0));
   Real scale_length = pin->GetOrAddReal("problem", "scale_length", 676);
   Real angular_velocity = pin->GetOrAddReal("problem", "angular_velocity", 0.0);
@@ -83,6 +83,7 @@ void SpinSourceFunction(MeshBlock *pmb, const Real time, const Real dt,
   Real add_grav = pin->GetOrAddReal("problem", "add_grav", false);
   Real add_temerature_condition = pin->GetOrAddReal("problem", "add_temperature_condition", false);
   Real add_cooling = pin->GetOrAddReal("problem", "add_cooling", false);
+  log_info(pin, "finished initialization");
 
   for (int k = pmb->ks; k <= pmb->ke; k++)
   {
@@ -101,14 +102,17 @@ void SpinSourceFunction(MeshBlock *pmb, const Real time, const Real dt,
         Real velocity_y = prim(IVY, k, j, i);
         Real velocity_z = prim(IVZ, k, j, i);
         Real pressure = den * (pow(velocity_x, 2) + pow(velocity_y, 2) + pow(velocity_z, 2));
+        log_info(pin, "before calling grav");
 
         if (add_grav){
           Grav(pmb, dt, prim, cons, G, tot_mass, scale_length,
           rad, den, x, y, z, k, j, i);
         }
+        log_info(pin, "before calling temp");
         if (add_temerature_condition){
           TempCondition(numerator, denominator, den, energy);
         }
+        log_info(pin, "before calling cooling");
         if (add_cooling){
           Cooling(cons, dt, k, j, i, den, pressure);
         }
@@ -134,7 +138,7 @@ void SpinSourceFunction(MeshBlock *pmb, const Real time, const Real dt,
 
 void Mesh::InitUserMeshData(ParameterInput *pin)
 {
-  // EnrollUserExplicitSourceFunction(SpinSourceFunction);
+  EnrollUserExplicitSourceFunction(SpinSourceFunction);
 }
 
 //========================================================================================
