@@ -59,8 +59,11 @@ void TempCondition(Real* numerator, Real* denominator, Real den,
 }
 
 void Cooling(AthenaArray<Real> &cons, const Real dt, Real k,Real j,Real i,
-             Real den, Real pressure){
+             Real den, Real pressure, Real accelerate_cooling){
   cons(IEN, k, j, i) += 2.52 * pow(10, 7) * pow(den, 1.5) * pow(pressure, 0.5) * dt;
+  if (accelerate_cooling) {
+    cons(IEN, k, j, i) += pow(10, 9) * pow(den, 1.5) * pow(pressure, 0.5) * dt;
+  }
 }
 void SpinSourceFunction(MeshBlock *pmb, const Real time, const Real dt,
           const AthenaArray<Real> &prim, const AthenaArray<Real> &bcc,
@@ -82,6 +85,7 @@ void SpinSourceFunction(MeshBlock *pmb, const Real time, const Real dt,
   Real add_grav = pin->GetOrAddReal("problem", "add_grav", false);
   Real add_temerature_condition = pin->GetOrAddReal("problem", "add_temperature_condition", false);
   Real add_cooling = pin->GetOrAddReal("problem", "add_cooling", false);
+  Real accelerate_cooling = pin->GetOrAddReal("problem", "accelerate_cooling", false);
   log_info(pin, "finished initialization");
 
   for (int k = pmb->ks; k <= pmb->ke; k++)
@@ -113,7 +117,7 @@ void SpinSourceFunction(MeshBlock *pmb, const Real time, const Real dt,
         }
         log_info(pin, "before calling cooling");
         if (add_cooling){
-          Cooling(cons, dt, k, j, i, den, pressure);
+          Cooling(cons, dt, k, j, i, den, pressure, accelerate_cooling);
         }
       }
     }
