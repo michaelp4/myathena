@@ -37,8 +37,8 @@ void Grav(MeshBlock *pmb, const Real dt, const AthenaArray<Real> &prim,
           AthenaArray<Real> &cons, Real G,Real tot_mass,Real scale_length,
           Real rad,Real den,Real x,Real y,Real z,Real k,Real j,Real i){
   Real dPhi = (G * tot_mass) / pow(rad + scale_length, 2.0);
-  Real force = -dPhi * den;// adding times 2 to check
-  Real dMomentum = force * dt * 5;
+  Real force = -dPhi * den;
+  Real dMomentum = force * dt;
   Real dIM1 = dMomentum * x / rad;
   Real dIM2 = dMomentum * y / rad;
   Real dIM3 = dMomentum * z / rad;
