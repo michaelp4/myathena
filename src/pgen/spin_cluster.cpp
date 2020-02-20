@@ -97,7 +97,6 @@ void SpinSourceFunction(MeshBlock *pmb, const Real time, const Real dt,
   Real add_temerature_condition = pin->GetOrAddReal("problem", "add_temperature_condition", false);
   Real add_cooling = pin->GetOrAddReal("problem", "add_cooling", false);
   Real accelerate_cooling = pin->GetOrAddReal("problem", "accelerate_cooling", false);
-  Real log_temp = pin->GetOrAddReal("problem", "log_temperature", false);
   log_info(pin, "finished initialization");
 
   for (int k = pmb->ks; k <= pmb->ke; k++)
@@ -132,17 +131,8 @@ void SpinSourceFunction(MeshBlock *pmb, const Real time, const Real dt,
           Cooling(cons, dt, k, j, i, den, pressure, accelerate_cooling);
         }
         log_info(pin, "before calling cooling");
-        if (log_temp) {
-          LogTemp(tmp_avg_nume, tmp_avg_deno, den, energy);
-        }
       }
     }
-  }
-  if(log_temp && *tmp_avg_deno != 0) {
-    // if (*tmp_avg_nume / *tmp_avg_deno < initial_temp /2.71828) {
-      std::string temp = std::to_string(*tmp_avg_nume / *tmp_avg_deno);
-      std::cout << std::endl << "*** " + temp + " ***" << std::endl;
-    // }
   }
   if (add_temerature_condition) {
     try
@@ -257,5 +247,53 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin)
 
 void Mesh::UserWorkAfterLoop(ParameterInput *pin)
 {
-  return;
+  Real log_temp = pin->GetOrAddReal("problem", "log_temperature", false);
+  if (!log_temp) {
+    std::cout << std::endl << "*** does it work? ***" << std::endl;
+    return;
+  }
+  // Real G = 0.00430091 * pow(10.0, 7.0); // Units: pc (parsec) / solar mass * (km/s)^2
+  // Real tot_mass = pin->GetOrAddReal("problem", "tot_mass", pow(10.0, 5.0));
+  // Real scale_length = pin->GetOrAddReal("problem", "scale_length", 676);
+  // Real angular_velocity = pin->GetOrAddReal("problem", "angular_velocity", 0.0);
+  // Real x0   = pin->GetOrAddReal("problem","x1_0",0.0);
+  // Real y0   = pin->GetOrAddReal("problem","x2_0",0.0);
+  // Real z0   = pin->GetOrAddReal("problem","x3_0",0.0);
+  // Real *numerator, *denominator, n = 0.0, d = 0.0;
+  // numerator = &n;
+  // denominator = &d;
+
+  // Real *tmp_avg_nume, *tmp_avg_deno, n1 = 0.0, d1 = 0.0;
+  // tmp_avg_nume = &n1;
+  // tmp_avg_deno = &d1;
+
+  // for (int k = pmb->ks; k <= pmb->ke; k++)
+  // {
+  //   for (int j = pmb->js; j <= pmb->je; j++)
+  //   {
+  //     for (int i = pmb->is; i <= pmb->ie; i++)
+  //     {
+  //       Real x = pmb->pcoord->x1v(i);
+  //       Real y = pmb->pcoord->x2v(j);
+  //       Real z = pmb->pcoord->x3v(k);
+  //       Real den = prim(IDN, k, j, i);
+  //       Real energy = prim(IEN, k, j, i);
+  //       Real rad = std::sqrt(SQR(x - x0) + SQR(y - y0) + SQR(z - z0));
+
+  //       Real velocity_x = prim(IVX, k, j, i);
+  //       Real velocity_y = prim(IVY, k, j, i);
+  //       Real velocity_z = prim(IVZ, k, j, i);
+  //       Real pressure = den * (pow(velocity_x, 2) + pow(velocity_y, 2) + pow(velocity_z, 2));
+  //       Real temperature = 2.0 / 3.0 * energy / den;
+  //       *numerator += temperature * den;
+  //       *denominator += den;
+  //     }
+  //   }
+  // }
+  // if(log_temp && *tmp_avg_deno != 0) {
+  //   // if (*tmp_avg_nume / *tmp_avg_deno < initial_temp /2.71828) {
+  //     std::string temp = std::to_string(*tmp_avg_nume / *tmp_avg_deno);
+  //     std::cout << std::endl << "*** " + temp + " ***" << std::endl;
+  //   // }
+  // }
 }
