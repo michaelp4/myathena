@@ -678,12 +678,12 @@ void TempCheck(Mesh *pm, ParameterInput *pin) {
       {
         for (int i = pmb->is; i <= pmb->ie; i++)
         {
-          Real x = pmb->pcoord->x1v(i);
-          Real y = pmb->pcoord->x2v(j);
-          Real z = pmb->pcoord->x3v(k);
+          // Real x = pmb->pcoord->x1v(i);
+          // Real y = pmb->pcoord->x2v(j);
+          // Real z = pmb->pcoord->x3v(k);
           Real den = pmb->phydro->u(IDN, k, j, i);
           Real energy = pmb->phydro->u(IEN, k, j, i);
-          Real rad = std::sqrt(SQR(x - x0) + SQR(y - y0) + SQR(z - z0));
+          // Real rad = std::sqrt(SQR(x - x0) + SQR(y - y0) + SQR(z - z0));
 
           // Real velocity_x = prim(IVX, k, j, i);
           // Real velocity_y = prim(IVY, k, j, i);
