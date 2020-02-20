@@ -68,7 +68,7 @@
 #include "../mesh/mesh.hpp"
 #include "../parameter_input.hpp"
 #include "outputs.hpp"
-// #include "../globals.hpp"
+#include "../globals.hpp"
 
 
 //----------------------------------------------------------------------------------------
@@ -652,47 +652,44 @@ void OutputType::ClearOutputData() {
   plast_data_  = NULL;
 }
 
-// void TempCheck(Mesh *pm, ParameterInput *pin) {
-//   MeshBlock *pmb = pm->pblock;
-//   Real *numerator, *denominator, n = 0.0, d = 0.0;
-//   numerator = &n;
-//   denominator = &d;
-//   while (pmb != NULL)  {
-//     for (int k = pmb->ks; k <= pmb->ke; k++)
-//     {
-//       for (int j = pmb->js; j <= pmb->je; j++)
-//       {
-//         for (int i = pmb->is; i <= pmb->ie; i++)
-//         {
-//           Real den = pmb->phydro->u(IDN, k, j, i);
-//           Real energy = pmb->phydro->u(IEN, k, j, i);
-//           Real temperature = 2.0 / 3.0 * energy / den;
-//           *numerator += temperature * den;
-//           *denominator += den;
-//         }
-//       }
-//     }
-//     pmb=pmb->next;
-//   }
-//   if(*denominator != 0) {
-//     std::string temp = std::to_string(*numerator / *denominator);
-//     std::cout << std::endl << "*** " + temp + " ***" << std::endl;
-//     if (*numerator / *denominator < 188431.441383/2.71828) {
-//       Globals::is_running = false;
-//     }
-//   }
-// }
-
 //----------------------------------------------------------------------------------------
 //! \fn void Outputs::MakeOutputs(Mesh *pm, ParameterInput *pin, bool wtflag)
 //  \brief scans through linked list of OutputTypes and makes any outputs needed.
 
 void Outputs::MakeOutputs(Mesh *pm, ParameterInput *pin, bool wtflag) {
   bool first=true;
-  // Real log_temp = pin->GetOrAddReal("problem", "log_temperature", false);
-  // if (log_temp) {
-  //   TempCheck(pm, pin);;
-  // }
+
+  Real log_temp = pin->GetOrAddReal("problem", "log_temperature", false);
+  if (log_temp) {
+  MeshBlock *pmb = pm->pblock;
+  Real *numerator, *denominator, n = 0.0, d = 0.0;
+  numerator = &n;
+  denominator = &d;
+  while (pmb != NULL)  {
+      for (int k = pmb->ks; k <= pmb->ke; k++)
+      {
+        for (int j = pmb->js; j <= pmb->je; j++)
+        {
+          for (int i = pmb->is; i <= pmb->ie; i++)
+          {
+            Real den = pmb->phydro->u(IDN, k, j, i);
+            Real energy = pmb->phydro->u(IEN, k, j, i);
+            Real temperature = 2.0 / 3.0 * energy / den;
+            *numerator += temperature * den;
+            *denominator += den;
+          }
+        }
+      }
+      pmb=pmb->next;
+    }
+    if(*denominator != 0) {
+      std::string temp = std::to_string(*numerator / *denominator);
+      std::cout << std::endl << "*** " + temp + " ***" << std::endl;
+      if (*numerator / *denominator < 188431.441383/2.71828) {
+        Globals::is_running = false;
+      }
+    }
+  }
   OutputType* ptype = pfirst_type_;
   while (ptype != NULL) {
     if ((pm->time == pm->start_time) ||
