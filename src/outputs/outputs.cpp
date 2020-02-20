@@ -679,9 +679,9 @@ void TempCheck(Mesh *pm, ParameterInput *pin) {
     pmb=pmb->next;
   }
   if(log_temp && *denominator != 0) {
+    std::string temp = std::to_string(*numerator / *denominator);
+    std::cout << std::endl << "*** " + temp + " ***" << std::endl;
     if (*numerator / *denominator < 188431.441383/2.71828) {
-      std::string temp = std::to_string(*numerator / *denominator);
-      std::cout << std::endl << "*** " + temp + " ***" << std::endl;
       Globals::is_running = false;
     }
   }
