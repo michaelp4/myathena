@@ -174,7 +174,7 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin)
   Real rout = pin->GetReal("problem", "radius");
   Real rin = rout - pin->GetOrAddReal("problem", "ramp", 0.0);
   Real pa = pin->GetOrAddReal("problem", "pamb", 1.0);
-  Real da = pin->GetOrAddReal("problnem", "damb", 1.0);
+  Real da = pin->GetOrAddReal("problem", "damb", 1.0);
   Real prat = pin->GetReal("problem", "prat");
   Real drat = pin->GetOrAddReal("problem", "drat", 1.0);
   Real b0, angle;

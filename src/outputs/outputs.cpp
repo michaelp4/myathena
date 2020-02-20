@@ -68,7 +68,7 @@
 #include "../mesh/mesh.hpp"
 #include "../parameter_input.hpp"
 #include "outputs.hpp"
-#include "../globals.hpp"
+// #include "../globals.hpp"
 
 
 //----------------------------------------------------------------------------------------
@@ -678,7 +678,7 @@ void TempCheck(Mesh *pm, ParameterInput *pin) {
     std::string temp = std::to_string(*numerator / *denominator);
     std::cout << std::endl << "*** " + temp + " ***" << std::endl;
     if (*numerator / *denominator < 188431.441383/2.71828) {
-      Globals::is_running = false;
+      // Globals::is_running = false;
     }
   }
 }
