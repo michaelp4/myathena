@@ -689,10 +689,10 @@ void TempCheck(Mesh *pm, ParameterInput *pin) {
 
 void Outputs::MakeOutputs(Mesh *pm, ParameterInput *pin, bool wtflag) {
   bool first=true;
-  Real log_temp = pin->GetOrAddReal("problem", "log_temperature", false);
-  if (log_temp) {
-    TempCheck(pm, pin);;
-  }
+  // Real log_temp = pin->GetOrAddReal("problem", "log_temperature", false);
+  // if (log_temp) {
+  //   TempCheck(pm, pin);;
+  // }
   OutputType* ptype = pfirst_type_;
   while (ptype != NULL) {
     if ((pm->time == pm->start_time) ||
