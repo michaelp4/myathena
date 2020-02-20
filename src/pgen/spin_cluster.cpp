@@ -51,12 +51,6 @@ void Grav(MeshBlock *pmb, const Real dt, const AthenaArray<Real> &prim,
   cons(IEN, k, j, i) += dIM1 * velocity_x + dIM2 * velocity_y + dIM3 * velocity_z;
 }
 
-void TempCondition(Real* numerator, Real* denominator, Real den, 
-                   Real energy){
-  Real temperature = 2.0 / 3.0 * energy / den;
-  *numerator += temperature * den;
-  *denominator += den;
-}
 
 void Cooling(AthenaArray<Real> &cons, const Real dt, Real k,Real j,Real i,
              Real den, Real pressure, Real accelerate_cooling){
@@ -64,6 +58,19 @@ void Cooling(AthenaArray<Real> &cons, const Real dt, Real k,Real j,Real i,
   if (accelerate_cooling) {
     cons(IEN, k, j, i) += pow(10, 9) * pow(den, 1.5) * pow(pressure, 0.5) * dt;
   }
+}
+void TempCondition(Real* numerator, Real* denominator, Real den, 
+                   Real energy){
+  Real temperature = 2.0 / 3.0 * energy / den;
+  *numerator += temperature * den;
+  *denominator += den;
+}
+
+void LogTemp(Real* numerator, Real* denominator, Real den, 
+                   Real energy){
+  Real temperature = 2.0 / 3.0 * energy / den;
+  *numerator += temperature * den;
+  *denominator += den;
 }
 void SpinSourceFunction(MeshBlock *pmb, const Real time, const Real dt,
           const AthenaArray<Real> &prim, const AthenaArray<Real> &bcc,
@@ -82,10 +89,15 @@ void SpinSourceFunction(MeshBlock *pmb, const Real time, const Real dt,
   numerator = &n;
   denominator = &d;
 
+  Real *tmp_avg_nume, *tmp_avg_deno, n = 0.0, d = 0.0;
+  tmp_avg_nume = &n;
+  tmp_avg_deno = &d;
+
   Real add_grav = pin->GetOrAddReal("problem", "add_grav", false);
   Real add_temerature_condition = pin->GetOrAddReal("problem", "add_temperature_condition", false);
   Real add_cooling = pin->GetOrAddReal("problem", "add_cooling", false);
   Real accelerate_cooling = pin->GetOrAddReal("problem", "accelerate_cooling", false);
+  Real log_temp = pin->GetOrAddReal("problem", "log_temperature", false);
   log_info(pin, "finished initialization");
 
   for (int k = pmb->ks; k <= pmb->ke; k++)
@@ -119,8 +131,18 @@ void SpinSourceFunction(MeshBlock *pmb, const Real time, const Real dt,
         if (add_cooling){
           Cooling(cons, dt, k, j, i, den, pressure, accelerate_cooling);
         }
+        log_info(pin, "before calling cooling");
+        if (log_temp) {
+          LogTemp(tmp_avg_nume, tmp_avg_deno, den, energy);
+        }
       }
     }
+  }
+  if(log_temp && *tmp_avg_deno != 0) {
+    // if (*tmp_avg_nume / *tmp_avg_deno < initial_temp /2.71828) {
+      std::string temp = std::to_string(*tmp_avg_nume / *tmp_avg_deno);
+      std::cout << std::endl << "*** " + temp + " ***" << std::endl;
+    // }
   }
   if (add_temerature_condition) {
     try
@@ -162,7 +184,7 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin)
   Real rout = pin->GetReal("problem", "radius");
   Real rin = rout - pin->GetOrAddReal("problem", "ramp", 0.0);
   Real pa = pin->GetOrAddReal("problem", "pamb", 1.0);
-  Real da = pin->GetOrAddReal("problem", "damb", 1.0);
+  Real da = pin->GetOrAddReal("problnem", "damb", 1.0);
   Real prat = pin->GetReal("problem", "prat");
   Real drat = pin->GetOrAddReal("problem", "drat", 1.0);
   Real b0, angle;
