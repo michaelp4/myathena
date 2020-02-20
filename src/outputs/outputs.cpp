@@ -656,6 +656,7 @@ void OutputType::ClearOutputData() {
 
 void Outputs::MakeOutputs(Mesh *pm, ParameterInput *pin, bool wtflag) {
   bool first=true;
+  std::cout << std::endl << "*** Mybe this will work? ***" << std::endl;
   OutputType* ptype = pfirst_type_;
   while (ptype != NULL) {
     if ((pm->time == pm->start_time) ||
