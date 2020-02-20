@@ -54,9 +54,9 @@ void Grav(MeshBlock *pmb, const Real dt, const AthenaArray<Real> &prim,
 
 void Cooling(AthenaArray<Real> &cons, const Real dt, Real k,Real j,Real i,
              Real den, Real pressure, Real accelerate_cooling){
-  cons(IEN, k, j, i) += 2.52 * pow(10, 7) * pow(den, 1.5) * pow(pressure, 0.5) * dt;
+  cons(IEN, k, j, i) -= 2.52 * pow(10, 7) * pow(den, 1.5) * pow(pressure, 0.5) * dt;
   if (accelerate_cooling) {
-    cons(IEN, k, j, i) += pow(10, 9) * pow(den, 1.5) * pow(pressure, 0.5) * dt;
+    cons(IEN, k, j, i) -= pow(10, 9) * pow(den, 1.5) * pow(pressure, 0.5) * dt;
   }
 }
 void TempCondition(Real* numerator, Real* denominator, Real den, 
