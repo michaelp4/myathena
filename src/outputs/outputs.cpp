@@ -653,10 +653,6 @@ void OutputType::ClearOutputData() {
 }
 
 void TempCheck(Mesh *pm, ParameterInput *pin) {
-  Real log_temp = pin->GetOrAddReal("problem", "log_temperature", false);
-  if (!log_temp) {
-    return;
-  }
   MeshBlock *pmb = pm->pblock;
   Real *numerator, *denominator, n = 0.0, d = 0.0;
   numerator = &n;
@@ -678,7 +674,7 @@ void TempCheck(Mesh *pm, ParameterInput *pin) {
     }
     pmb=pmb->next;
   }
-  if(log_temp && *denominator != 0) {
+  if(*denominator != 0) {
     std::string temp = std::to_string(*numerator / *denominator);
     std::cout << std::endl << "*** " + temp + " ***" << std::endl;
     if (*numerator / *denominator < 188431.441383/2.71828) {
@@ -693,7 +689,10 @@ void TempCheck(Mesh *pm, ParameterInput *pin) {
 
 void Outputs::MakeOutputs(Mesh *pm, ParameterInput *pin, bool wtflag) {
   bool first=true;
-  TempCheck(pm, pin);
+  Real log_temp = pin->GetOrAddReal("problem", "log_temperature", false);
+  if (log_temp) {
+    TempCheck(pm, pin);;
+  }
   OutputType* ptype = pfirst_type_;
   while (ptype != NULL) {
     if ((pm->time == pm->start_time) ||

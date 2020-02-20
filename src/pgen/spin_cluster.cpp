@@ -229,10 +229,13 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin)
         (rad / (rad + scale_length)) * (25 + 52 * rad_to_scale_ratio + 42 * pow(rad_to_scale_ratio, 2.0) + 12 * 
         pow(rad_to_scale_ratio, 3.0)));
         Real pressure = den * radial_velocity_avg_squared;
-        Real velocity_squared = pow(angular_velocity * x, 2.0)+ pow(angular_velocity * y, 2.0);
+
+        Real modi_angular_vel = angular_velocity/(1+exp((rad+100)/10));
+        
+        Real velocity_squared = pow(modi_angular_vel * x, 2.0)+ pow(modi_angular_vel * y, 2.0);
         Real kinetic_energy = pressure / gm1 + 0.5 * den * velocity_squared;
-        phydro->u(IM1, k, j, i) = - angular_velocity * y * den;
-        phydro->u(IM2, k, j, i) = angular_velocity * x * den;
+        phydro->u(IM1, k, j, i) = - modi_angular_vel * y * den;
+        phydro->u(IM2, k, j, i) = modi_angular_vel * x * den;
         phydro->u(IM3, k, j, i) = 0.0;
         phydro->u(IEN, k, j, i) = kinetic_energy;
       }
@@ -247,11 +250,6 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin)
 
 void Mesh::UserWorkAfterLoop(ParameterInput *pin)
 {
-  Real log_temp = pin->GetOrAddReal("problem", "log_temperature", false);
-  if (!log_temp) {
-    std::cout << std::endl << "*** does it work? ***" << std::endl;
-    return;
-  }
   // Real G = 0.00430091 * pow(10.0, 7.0); // Units: pc (parsec) / solar mass * (km/s)^2
   // Real tot_mass = pin->GetOrAddReal("problem", "tot_mass", pow(10.0, 5.0));
   // Real scale_length = pin->GetOrAddReal("problem", "scale_length", 676);
