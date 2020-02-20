@@ -68,6 +68,8 @@
 #include "../mesh/mesh.hpp"
 #include "../parameter_input.hpp"
 #include "outputs.hpp"
+#include "../globals.hpp"
+
 
 //----------------------------------------------------------------------------------------
 // OutputType constructor
@@ -677,10 +679,11 @@ void TempCheck(Mesh *pm, ParameterInput *pin) {
     pmb=pmb->next;
   }
   if(log_temp && *denominator != 0) {
-    // if (*tmp_avg_nume / *tmp_avg_deno < initial_temp /2.71828) {
+    if (*numerator / *denominator < 188431.441383/2.71828) {
       std::string temp = std::to_string(*numerator / *denominator);
       std::cout << std::endl << "*** " + temp + " ***" << std::endl;
-    // }
+      Globals::is_running = false;
+    }
   }
 }
 
