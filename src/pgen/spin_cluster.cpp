@@ -89,9 +89,9 @@ void SpinSourceFunction(MeshBlock *pmb, const Real time, const Real dt,
   numerator = &n;
   denominator = &d;
 
-  Real *tmp_avg_nume, *tmp_avg_deno, n = 0.0, d = 0.0;
-  tmp_avg_nume = &n;
-  tmp_avg_deno = &d;
+  Real *tmp_avg_nume, *tmp_avg_deno, n1 = 0.0, d1 = 0.0;
+  tmp_avg_nume = &n1;
+  tmp_avg_deno = &d1;
 
   Real add_grav = pin->GetOrAddReal("problem", "add_grav", false);
   Real add_temerature_condition = pin->GetOrAddReal("problem", "add_temperature_condition", false);
