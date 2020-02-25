@@ -68,8 +68,6 @@
 #include "../mesh/mesh.hpp"
 #include "../parameter_input.hpp"
 #include "outputs.hpp"
-#include "../globals.hpp"
-
 
 //----------------------------------------------------------------------------------------
 // OutputType constructor
