@@ -230,7 +230,7 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin)
         pow(rad_to_scale_ratio, 3.0)));
         Real pressure = den * radial_velocity_avg_squared;
 
-        Real modi_angular_vel = angular_velocity/(1+exp((rad-3500)/100));
+        Real modi_angular_vel = angular_velocity/(1+exp((rad-6500)/300));
 
         Real velocity_squared = pow(modi_angular_vel * x, 2.0)+ pow(modi_angular_vel * y, 2.0);
         Real kinetic_energy = pressure / gm1 + 0.5 * den * velocity_squared;
