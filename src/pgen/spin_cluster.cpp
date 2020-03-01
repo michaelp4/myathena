@@ -53,15 +53,12 @@ void Grav(MeshBlock *pmb, const Real dt, const AthenaArray<Real> &prim,
 
 
 void Cooling(AthenaArray<Real> &cons, const Real dt, Real k,Real j,Real i,
-             Real den, Real pressure, Real accelerate_cooling, Real rad){
-  Real cooled_energy = 2.52 * pow(10, 7) * pow(den, 1.5) * pow(pressure, 0.5) * dt;
-  if(rad <= 3) {
+             Real den, Real pressure, Real rad, Real cooling_param, Real no_cooling_radius){
+  if(rad <= no_cooling_radius) {
     return;
   }
+  Real cooled_energy = 2.52 * pow(10, 7) * pow(den, 1.5) * pow(pressure, 0.5) * dt * cooling_param;
   cons(IEN, k, j, i) -= cooled_energy;
-  if (accelerate_cooling) {
-    cons(IEN, k, j, i) -= pow(10, 9) * pow(den, 1.5) * pow(pressure, 0.5) * dt;
-  }
 }
 void TempCondition(Real* numerator, Real* denominator, Real den, 
                    Real energy){
@@ -99,9 +96,9 @@ void SpinSourceFunction(MeshBlock *pmb, const Real time, const Real dt,
 
   Real add_grav = pin->GetOrAddReal("problem", "add_grav", false);
   Real add_temerature_condition = pin->GetOrAddReal("problem", "add_temperature_condition", false);
-  Real add_cooling = pin->GetOrAddReal("problem", "add_cooling", false);
-  Real accelerate_cooling = pin->GetOrAddReal("problem", "accelerate_cooling", false);
-  log_info(pin, "finished initialization");
+  Real cooling_param = pin->GetOrAddReal("problem", "cooling_param", false);
+  // Real accelerate_cooling = pin->GetOrAddReal("problem", "accelerate_cooling", false);
+  Real no_cooling_radius = pin->GetOrAddReal("problem", "no_cooling_radius", 0);
 
   for (int k = pmb->ks; k <= pmb->ke; k++)
   {
@@ -131,8 +128,8 @@ void SpinSourceFunction(MeshBlock *pmb, const Real time, const Real dt,
           TempCondition(numerator, denominator, den, energy);
         }
         log_info(pin, "before calling cooling");
-        if (add_cooling){
-          Cooling(cons, dt, k, j, i, den, pressure, accelerate_cooling, rad);
+        if (cooling_param){
+          Cooling(cons, dt, k, j, i, den, pressure, rad, cooling_param, no_cooling_radius);
         }
         log_info(pin, "before calling cooling");
       }
