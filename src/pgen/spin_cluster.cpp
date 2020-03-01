@@ -53,9 +53,9 @@ void Grav(MeshBlock *pmb, const Real dt, const AthenaArray<Real> &prim,
 
 
 void Cooling(AthenaArray<Real> &cons, const Real dt, Real k,Real j,Real i,
-             Real den, Real pressure, Real accelerate_cooling){
+             Real den, Real pressure, Real accelerate_cooling, Real rad){
   Real cooled_energy = 2.52 * pow(10, 7) * pow(den, 1.5) * pow(pressure, 0.5) * dt;
-  if(i==0 && j==0 && k==0) {
+  if(rad <= 3) {
     return;
   }
   cons(IEN, k, j, i) -= cooled_energy;
@@ -132,7 +132,7 @@ void SpinSourceFunction(MeshBlock *pmb, const Real time, const Real dt,
         }
         log_info(pin, "before calling cooling");
         if (add_cooling){
-          Cooling(cons, dt, k, j, i, den, pressure, accelerate_cooling);
+          Cooling(cons, dt, k, j, i, den, pressure, accelerate_cooling, rad);
         }
         log_info(pin, "before calling cooling");
       }
