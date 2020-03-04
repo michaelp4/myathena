@@ -60,11 +60,10 @@ void Cooling(AthenaArray<Real> &cons, const Real dt, Real k,Real j,Real i,
   Real cooled_energy = 2.52 * pow(10, 7) * pow(den, 1.5) * pow(pressure, 0.5) * dt * cooling_param;
   cons(IEN, k, j, i) -= cooled_energy;
 }
-void TempCondition(Real* numerator, Real* denominator, Real den, 
-                   Real energy){
-  Real temperature = 2.0 / 3.0 * energy / den;
-  *numerator += temperature * den;
-  *denominator += den;
+void TempCondition(Mesh* mesh){
+  if (mesh->dt < pow(10,-7)){
+      Globals::is_running = false;
+  }
 }
 
 void LogTemp(Real* numerator, Real* denominator, Real den, 
@@ -125,7 +124,7 @@ void SpinSourceFunction(MeshBlock *pmb, const Real time, const Real dt,
         }
         log_info(pin, "before calling temp");
         if (add_temerature_condition){
-          TempCondition(numerator, denominator, den, energy);
+          TempCondition(pmb->pmy_mesh);
         }
         log_info(pin, "before calling cooling");
         if (cooling_param){
