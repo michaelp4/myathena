@@ -88,8 +88,7 @@ void SpinSourceFunction(MeshBlock *pmb, const Real time, const Real dt,
   Real add_grav = pin->GetOrAddReal("problem", "add_grav", false);
   Real add_temerature_condition = pin->GetOrAddReal("problem", "add_temperature_condition", false);
   Real cooling_param = pin->GetOrAddReal("problem", "cooling_param", false);
-  // Real accelerate_cooling = pin->GetOrAddReal("problem", "accelerate_cooling", false);
-  Real no_cooling_radius = pin->GetOrAddReal("problem", "no_cooling_radius", 0);
+  Real no_cooling_radius = pin->GetOrAddReal("problem", "no_cooling_radius", 0.0);
 
   for (int k = pmb->ks; k <= pmb->ke; k++)
   {
@@ -103,10 +102,6 @@ void SpinSourceFunction(MeshBlock *pmb, const Real time, const Real dt,
         Real den = prim(IDN, k, j, i);
         Real pressure = prim(IEN, k, j, i);
         Real rad = std::sqrt(SQR(x - x0) + SQR(y - y0) + SQR(z - z0));
-
-        Real velocity_x = prim(IVX, k, j, i);
-        Real velocity_y = prim(IVY, k, j, i);
-        Real velocity_z = prim(IVZ, k, j, i);
 
         if (add_grav){
           Grav(pmb, dt, prim, cons, G, tot_mass, scale_length,
@@ -143,18 +138,6 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin)
   Real scale_length = pin->GetOrAddReal("problem", "scale_length", 676);
   Real angular_velocity = pin->GetOrAddReal("problem", "angular_velocity", 0.0);
   
-  Real rout = pin->GetReal("problem", "radius");
-  Real rin = rout - pin->GetOrAddReal("problem", "ramp", 0.0);
-  Real pa = pin->GetOrAddReal("problem", "pamb", 1.0);
-  Real da = pin->GetOrAddReal("problem", "damb", 1.0);
-  Real prat = pin->GetReal("problem", "prat");
-  Real drat = pin->GetOrAddReal("problem", "drat", 1.0);
-  Real b0, angle;
-  if (MAGNETIC_FIELDS_ENABLED)
-  {
-    b0 = pin->GetReal("problem", "b0");
-    angle = (PI / 180.0) * pin->GetReal("problem", "angle");
-  }
   Real gamma = peos->GetGamma();
   Real gm1 = gamma - 1.0;
 
@@ -193,7 +176,8 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin)
         // }
 
         // Using the function from Hernquist 1990 for mass density and eq of state
-        Real den = (tot_mass / (2 * PI)) * (scale_length / rad) * (1 / pow(rad + scale_length, 3.0))*0.17;
+        Real barion_fraction = 0.17;
+        Real den = (tot_mass / (2 * PI)) * (scale_length / rad) * (1 / pow(rad + scale_length, 3.0)) * barion_fraction;
         phydro->u(IDN, k, j, i) = den;
         Real rad_to_scale_ratio = rad / scale_length;
         Real radial_velocity_avg_squared = ((G * tot_mass) / (12 * scale_length)) * 
@@ -205,11 +189,11 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin)
         Real modi_angular_vel = angular_velocity/(1+exp((rad-6500)/300));
 
         Real velocity_squared = pow(modi_angular_vel * x, 2.0)+ pow(modi_angular_vel * y, 2.0);
-        Real kinetic_energy = pressure / gm1 + 0.5 * den * velocity_squared;
+        Real total_energy = pressure / gm1 + 0.5 * den * velocity_squared; // Theraml energy + Kinetic energy
         phydro->u(IM1, k, j, i) = - modi_angular_vel * y * den;
         phydro->u(IM2, k, j, i) = modi_angular_vel * x * den;
         phydro->u(IM3, k, j, i) = 0.0;
-        phydro->u(IEN, k, j, i) = kinetic_energy;
+        phydro->u(IEN, k, j, i) = total_energy;
       }
     }
   }
