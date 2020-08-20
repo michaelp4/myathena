@@ -190,7 +190,7 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin)
 
         // Adding ceiling velocity (0.2 of the escape velocity)
         Real escape_velocity = std::sqrt(2*G*tot_mass / (rad + scale_length));
-        modi_angular_vel = std::fmin(0.2 * escape_velocity, modi_angular_vel);
+        modi_angular_vel = std::fmin(0.2 * escape_velocity / rad, modi_angular_vel);
 
         Real velocity_squared = pow(modi_angular_vel * x, 2.0)+ pow(modi_angular_vel * y, 2.0);
         Real total_energy = pressure / gm1 + 0.5 * den * velocity_squared; // Theraml energy + Kinetic energy
