@@ -58,7 +58,7 @@ void Cooling(AthenaArray<Real> &cons, const Real dt, Real k,Real j,Real i,
     return;
   }
   Real cooled_energy = 2.52 * pow(10.0, 7.0) * pow(den, 1.5) * pow(pressure, 0.5) * dt * cooling_param;
-  Real E_floar = 10^-38;
+  Real E_floar = pow(10,38);
   cons(IEN, k, j, i) = fmax(E_floar, cons(IEN, k, j, i) - cooled_energy);
 }
 void TempCondition(Mesh* mesh){
