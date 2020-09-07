@@ -69,6 +69,7 @@ void Cooling(AthenaArray<Real> &cons, const Real dt, Real k,Real j,Real i,
               << " Radoius: " << rad << " kpc" <<std::endl
               << " Time: " << time <<  std::endl
               << " Temperature: " << temperature << std::endl
+              << " gm1: " << gm1 << std::endl
               << " New Energy: " << std::fmax(Globals::E_floor + kinetic_energy, cons(IEN, k, j, i) - cooled_energy) << std::endl
               << " kinetic_energy: " << kinetic_energy << " ***" << std::endl;
   }
