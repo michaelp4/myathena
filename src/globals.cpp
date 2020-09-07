@@ -17,4 +17,17 @@ namespace Globals {
   int my_rank; // MPI rank of this process, set at start of main()
   int nranks;  // total number of MPI ranks, set at start of main()
   bool is_running; //Main loop runnint
+  Real tot_mass, 
+  scale_length,
+  angular_velocity,
+  x0,
+  y0,
+  z0,
+  no_cooling_radius,
+  E_floor,
+  log_on,
+  log_up_to_redius,
+  add_grav,
+  add_temerature_condition,
+  cooling_param;
 }
