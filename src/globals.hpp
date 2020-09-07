@@ -12,7 +12,7 @@ namespace Globals {
   extern int my_rank, nranks;
   // Main loop runnint
   extern bool is_running;
-  Real tot_mass, 
+  extern Real tot_mass, 
   scale_length,
   angular_velocity,
   x0,
