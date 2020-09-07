@@ -53,14 +53,20 @@ void Grav(MeshBlock *pmb, const Real dt, const AthenaArray<Real> &prim,
 
 
 void Cooling(AthenaArray<Real> &cons, const Real dt, Real k,Real j,Real i,
-             Real den, Real pressure, Real rad, Real cooling_param, Real no_cooling_radius,
-             Real E_floor, Real time, Real log_on){
+             Real den, Real pressure, Real rad, Real cooling_param, Real time,MeshBlock *pmb ){
+  ParameterInput *pin =pmb->phydro->pin;
+  Real no_cooling_radius = pin->GetOrAddReal("problem", "no_cooling_radius", 0.0);
+  Real E_floor = pin->GetOrAddReal("problem", "e_floor", pow(10.0,-5.0));
+  Real log_on = pin->GetOrAddBoolean("problem", "log_on", 0.0);
+  Real log_up_to_redius = pin->GetOrAddBoolean("problem", "log_up_to_redius", 2000.0);
+
+
   Real cooled_energy = 2.52 * pow(10.0, 7.0) * pow(den, 1.5) * pow(pressure, 0.5) * dt * cooling_param;
-  if(rad <= no_cooling_radius || rad >= 1000 || cons(IEN, k, j, i) < cooled_energy) {
+  if(rad <= no_cooling_radius || rad >= 1000) {
     return;
   }
   Real temperature = 72.8 * pressure / den;
-  if(log_on > 0.0 && E_floor > cons(IEN, k, j, i) - cooled_energy){
+  if(log_on > 0.0 && E_floor > cons(IEN, k, j, i) - cooled_energy && rad < log_up_to_redius){
      std::cout<< "*** Energy:" << cons(IEN, k, j, i)<< std::endl 
               << " Cooled energy:" << cooled_energy << std::endl
               << " Radoius: " << rad << " kpc" <<std::endl
@@ -98,9 +104,6 @@ void SpinSourceFunction(MeshBlock *pmb, const Real time, const Real dt,
   Real add_grav = pin->GetOrAddReal("problem", "add_grav", false);
   Real add_temerature_condition = pin->GetOrAddReal("problem", "add_temperature_condition", false);
   Real cooling_param = pin->GetOrAddReal("problem", "cooling_param", false);
-  Real no_cooling_radius = pin->GetOrAddReal("problem", "no_cooling_radius", 0.0);
-  Real E_floor = pin->GetOrAddReal("problem", "e_floor", pow(10.0,-5.0));
-  Real log_on = pin->GetOrAddBoolean("problem", "log_on", 0.0);
 
   for (int k = pmb->ks; k <= pmb->ke; k++)
   {
@@ -123,7 +126,7 @@ void SpinSourceFunction(MeshBlock *pmb, const Real time, const Real dt,
           TempCondition(pmb->pmy_mesh);
         }
         if (cooling_param){
-          Cooling(cons, dt, k, j, i, den, pressure, rad, cooling_param, no_cooling_radius,E_floor, time, log_on);
+          Cooling(cons, dt, k, j, i, den, pressure, rad, cooling_param, time, pmb);
         }
       }
     }
