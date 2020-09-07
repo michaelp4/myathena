@@ -59,6 +59,9 @@ void Cooling(AthenaArray<Real> &cons, const Real dt, Real k,Real j,Real i,
     return;
   }
   Real temperature = 72.8 * pressure / den;
+  Real gamma = pmb->peos->GetGamma();
+  Real gm1 = gamma - 1.0;
+  Real kinetic_energy = cons(IEN, k, j, i) - pressure / gm1;
   if(Globals::log_on > 0 && Globals::E_floor > cons(IEN, k, j, i) - cooled_energy 
                          && rad < Globals::log_up_to_redius){
      std::cout<< "*** Energy:" << cons(IEN, k, j, i)<< std::endl 
@@ -66,9 +69,8 @@ void Cooling(AthenaArray<Real> &cons, const Real dt, Real k,Real j,Real i,
               << " Radoius: " << rad << " kpc" <<std::endl
               << " Time: " << time <<  std::endl
               << " Temperature: " << temperature << std::endl
-              << " dencity: " << den << " ***" << std::endl;
+              << " kinetic_energy: " << kinetic_energy << " ***" << std::endl;
   }
-  Real kinetic_energy = cons(IEN, k, j, i) - pressure * 3.0 / 2.0;
   cons(IEN, k, j, i) = std::fmax(Globals::E_floor + kinetic_energy, cons(IEN, k, j, i) - cooled_energy);
 }
 void TempCondition(Mesh* mesh){
