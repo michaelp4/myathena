@@ -12,6 +12,19 @@ namespace Globals {
   extern int my_rank, nranks;
   // Main loop runnint
   extern bool is_running;
+  Real tot_mass, 
+  scale_length,
+  angular_velocity,
+  x0,
+  y0,
+  z0,
+  no_cooling_radius,
+  E_floor,
+  log_on,
+  log_up_to_redius,
+  add_grav,
+  add_temerature_condition,
+  cooling_param;
 }
 
 #endif // GLOBALS_HPP_
