@@ -59,7 +59,7 @@ void Cooling(AthenaArray<Real> &cons, const Real dt, Real k,Real j,Real i,
     return;
   }
   Real temperature = 72.8 * pressure / den;
-  if(Globals::E_floor > cons(IEN, k, j, i) - cooled_energy){
+  if(Globals::E_floor > cons(IEN, k, j, i) - cooled_energy && rad < Globals::log_up_to_redius){
      std::cout<< "*** Energy:" << cons(IEN, k, j, i)<< std::endl 
               << " Cooled energy:" << cooled_energy << std::endl
               << " Radoius: " << rad << " kpc" <<std::endl
