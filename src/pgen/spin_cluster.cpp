@@ -61,7 +61,9 @@ void Cooling(AthenaArray<Real> &cons, const Real dt, Real k,Real j,Real i,
   Real cooled_energy = 2.52 * pow(10.0, 7.0) * pow(den, 1.5) * pow(pressure, 0.5) * dt * cooling_param;
   if(E_floor > cons(IEN, k, j, i)){
      std::cout << std::endl
-              << "*** energy:" << cons(IEN, k, j, i)<< std::endl << " cooled energy:" << cooled_energy << " ***" << std::endl;
+              << "*** energy:" << cons(IEN, k, j, i)<< std::endl 
+              << " cooled energy:" << cooled_energy << std::endl
+              << " Position {k,j,i}:{" <<k << "," << j << "," << i << "} ***" << std::endl;
   }
   cons(IEN, k, j, i) = fmax(E_floor, cons(IEN, k, j, i) - cooled_energy);
 }
