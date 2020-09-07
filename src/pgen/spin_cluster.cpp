@@ -54,7 +54,7 @@ void Grav(MeshBlock *pmb, const Real dt, const AthenaArray<Real> &prim,
 
 void Cooling(AthenaArray<Real> &cons, const Real dt, Real k,Real j,Real i,
              Real den, Real pressure, Real rad, Real cooling_param, Real no_cooling_radius,
-             Real E_floor){
+             Real E_floor, Real time){
   if(rad <= no_cooling_radius || rad >= 1000) {
     return;
   }
@@ -64,9 +64,10 @@ void Cooling(AthenaArray<Real> &cons, const Real dt, Real k,Real j,Real i,
               << "*** Energy:" << cons(IEN, k, j, i)<< std::endl 
               << " Cooled energy:" << cooled_energy << std::endl
               << " Position {k,j,i}:{" <<k << "," << j << "," << i << "}" << std::endl
-              << " Radoius: " << rad << " kpc ***" << std::endl;
+              << " Radoius: " << rad << " kpc" <<std::endl
+              << " Time: " << time << " ***" << std::endl;
   }
-  cons(IEN, k, j, i) = fmax(E_floor, cons(IEN, k, j, i) - cooled_energy);
+  cons(IEN, k, j, i) = std::fmax(E_floor, cons(IEN, k, j, i) - cooled_energy);
 }
 void TempCondition(Mesh* mesh){
   if (mesh->dt < pow(10,-7)){
@@ -121,7 +122,7 @@ void SpinSourceFunction(MeshBlock *pmb, const Real time, const Real dt,
           TempCondition(pmb->pmy_mesh);
         }
         if (cooling_param){
-          Cooling(cons, dt, k, j, i, den, pressure, rad, cooling_param, no_cooling_radius,E_floor);
+          Cooling(cons, dt, k, j, i, den, pressure, rad, cooling_param, no_cooling_radius,E_floor, time);
         }
       }
     }
