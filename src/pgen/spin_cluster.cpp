@@ -59,13 +59,15 @@ void Cooling(AthenaArray<Real> &cons, const Real dt, Real k,Real j,Real i,
     return;
   }
   Real temperature = 72.8 * pressure / den;
-  if(Globals::log_on > 0.0 && Globals::E_floor > cons(IEN, k, j, i) - cooled_energy){
+  if(Globals::E_floor > cons(IEN, k, j, i) - cooled_energy){
      std::cout<< "*** Energy:" << cons(IEN, k, j, i)<< std::endl 
               << " Cooled energy:" << cooled_energy << std::endl
               << " Radoius: " << rad << " kpc" <<std::endl
               << " Time: " << time <<  std::endl
               << " Temperature: " << temperature << std::endl
               << " log_up_to_redius: " << Globals::log_up_to_redius << std::endl
+              << " e_floor: " << Globals::E_floor << std::endl
+              << " log_on: " << Globals::log_on << std::endl
               << " dencity: " << den << " ***" << std::endl;
   }
   cons(IEN, k, j, i) = std::fmax(Globals::E_floor, cons(IEN, k, j, i) - cooled_energy);
