@@ -68,7 +68,8 @@ void Cooling(AthenaArray<Real> &cons, const Real dt, Real k,Real j,Real i,
               << " Temperature: " << temperature << std::endl
               << " dencity: " << den << " ***" << std::endl;
   }
-  cons(IEN, k, j, i) = std::fmax(Globals::E_floor, cons(IEN, k, j, i) - cooled_energy);
+  Real kinetic_energy = cons(IEN, k, j, i) - pressure * 3.0 / 2.0;
+  cons(IEN, k, j, i) = std::fmax(Globals::E_floor + kinetic_energy, cons(IEN, k, j, i) - cooled_energy);
 }
 void TempCondition(Mesh* mesh){
   if (mesh->dt < pow(10,-7)){
@@ -186,19 +187,19 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin)
 
         // Using the function from Hernquist 1990 for mass density and eq of state
         Real barion_fraction = 0.17;
-        Real den = (Globals::tot_mass / (2 * PI)) * (Globals::scale_length / rad) * (1 / pow(rad + Globals::scale_length, 3.0)) * barion_fraction;
+        Real den = (Globals::tot_mass / (2.0 * PI)) * (Globals::scale_length / rad) * (1.0 / pow(rad + Globals::scale_length, 3.0)) * barion_fraction;
         phydro->u(IDN, k, j, i) = den;
         Real rad_to_scale_ratio = rad / Globals::scale_length;
-        Real radial_velocity_avg_squared = ((G * Globals::tot_mass) / (12 * Globals::scale_length)) * 
-        ((12 * rad * pow(rad + Globals::scale_length, 3.0) / pow(Globals::scale_length, 4.0)) * log((rad + Globals::scale_length) / rad) - 
-        (rad / (rad + Globals::scale_length)) * (25 + 52 * rad_to_scale_ratio + 42 * pow(rad_to_scale_ratio, 2.0) + 12 * 
+        Real radial_velocity_avg_squared = ((G * Globals::tot_mass) / (12.0 * Globals::scale_length)) * 
+        ((12.0 * rad * pow(rad + Globals::scale_length, 3.0) / pow(Globals::scale_length, 4.0)) * log((rad + Globals::scale_length) / rad) - 
+        (rad / (rad + Globals::scale_length)) * (25.0 + 52.0 * rad_to_scale_ratio + 42.0 * pow(rad_to_scale_ratio, 2.0) + 12.0 * 
         pow(rad_to_scale_ratio, 3.0)));
         Real pressure = den * radial_velocity_avg_squared;
 
-        Real modi_angular_vel = Globals::angular_velocity/(1+exp((rad-6500)/300));
+        Real modi_angular_vel = Globals::angular_velocity/(1.0+exp((rad-6500.0)/300.0));
 
         // Adding ceiling velocity (0.2 of the escape velocity)
-        Real escape_velocity = std::sqrt(2*G*Globals::tot_mass / (rad + Globals::scale_length));
+        Real escape_velocity = std::sqrt(2.0 * G * Globals::tot_mass / (rad + Globals::scale_length));
         modi_angular_vel = std::fmin(0.2 * escape_velocity / rad, modi_angular_vel);
 
         Real velocity_squared = pow(modi_angular_vel * x, 2.0)+ pow(modi_angular_vel * y, 2.0);
