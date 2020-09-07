@@ -65,8 +65,8 @@ void Cooling(AthenaArray<Real> &cons, const Real dt, Real k,Real j,Real i,
               << " Cooled energy:" << cooled_energy << std::endl
               << " Radoius: " << rad << " kpc" <<std::endl
               << " Time: " << time <<  std::endl
-              // << " Temperature: " << temperature << " ***" << std::endl
-              ;
+              << " Temperature: " << temperature << std::endl
+              << " dencity: " << den << " ***" << std::endl;
   }
   cons(IEN, k, j, i) = std::fmax(E_floor, cons(IEN, k, j, i) - cooled_energy);
 }
