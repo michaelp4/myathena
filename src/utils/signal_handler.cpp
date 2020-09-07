@@ -18,6 +18,7 @@
 #include "utils.hpp"
 #include "../defs.hpp"
 #include "../globals.hpp"
+#include "../athena.hpp"
 
 #ifdef MPI_PARALLEL
 #include <mpi.h>
