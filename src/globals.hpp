@@ -7,6 +7,7 @@
 //========================================================================================
 //! \file globals.hpp
 //  \brief namespace containing external global variables
+#include "athena.hpp"
 
 namespace Globals {
   extern int my_rank, nranks;
