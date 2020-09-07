@@ -142,8 +142,8 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin)
   Globals::z0   = pin->GetOrAddReal("problem","x3_0",0.0);
   Globals::no_cooling_radius = pin->GetOrAddReal("problem", "no_cooling_radius", 0.0);
   Globals::E_floor = pin->GetOrAddReal("problem", "e_floor", pow(10.0,-5.0));
-  Globals::log_on = pin->GetOrAddBoolean("problem", "log_on", 0.0);
-  Globals::log_up_to_redius = pin->GetOrAddBoolean("problem", "log_up_to_redius", 2000.0);
+  Globals::log_on = pin->GetOrAddReal("problem", "log_on", 0.0);
+  Globals::log_up_to_redius = pin->GetOrAddReal("problem", "log_up_to_redius", 2000.0);
   Globals::add_grav = pin->GetOrAddReal("problem", "add_grav", false);
   Globals::add_temerature_condition = pin->GetOrAddReal("problem", "add_temperature_condition", false);
   Globals::cooling_param = pin->GetOrAddReal("problem", "cooling_param", false);
