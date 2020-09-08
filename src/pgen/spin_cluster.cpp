@@ -52,29 +52,38 @@ void Grav(MeshBlock *pmb, const Real dt, const AthenaArray<Real> &prim,
 }
 
 
-void Cooling(AthenaArray<Real> &cons, const Real dt, Real k,Real j,Real i,
-             Real den, Real pressure, Real rad, Real time,MeshBlock *pmb, Real momentum_squared){
-  Real cooled_energy = 2.52 * pow(10.0, 7.0) * pow(den, 1.5) * pow(pressure, 0.5) * dt * Globals::cooling_param;
+void Cooling(AthenaArray<Real> &cons, const AthenaArray<Real> &prim, const Real dt, Real k,Real j,Real i,
+             Real rad, Real time,MeshBlock *pmb){
+  Real prim_den = prim(IDN, k, j, i);
+  Real pressure = prim(IEN, k, j, i);
+  Real primitive_cooled_energy = 2.52 * pow(10.0, 7.0) * pow(prim_den, 1.5) * pow(pressure, 0.5) * dt * Globals::cooling_param;
   if(rad <= Globals::no_cooling_radius || rad >= 100.0) {
     return;
   }
-  Real temperature = 72.8 * pressure / den;
+  // Real temperature = 72.8 * pressure / den;
   Real gamma = pmb->peos->GetGamma();
   Real gm1 = gamma - 1.0;
+  Real primative_momnetum_squared = SQR(prim(IM1,k,j,i)) + SQR(prim(IM2,k,j,i)) + SQR(prim(IM3,k,j,i));
+  Real primative_kinetic_energy = 0.5*primative_momnetum_squared/prim_den;
+
+  Real cons_den = cons(IDN, k, j, i);
+  Real conservative_momnetum_squared = SQR(cons(IM1,k,j,i)) + SQR(cons(IM2,k,j,i)) + SQR(cons(IM3,k,j,i));
+  Real conservative_kinetic_energy = 0.5*conservative_momnetum_squared/cons_den; 
   // Real kinetic_energy = cons(IEN, k, j, i) - pressure / gm1;
-  Real kinetic_energy = 0.5*momentum_squared/den;
-  if(Globals::log_on > 0 && Globals::E_floor > cons(IEN, k, j, i) - cooled_energy 
-                         && rad < Globals::log_up_to_redius){
-     std::cout<< "*** Energy:" << cons(IEN, k, j, i)<< std::endl 
-              << " Cooled energy:" << cooled_energy << std::endl
-              << " Radoius: " << rad << " kpc" <<std::endl
-              << " Time: " << time <<  std::endl
-              << " Temperature: " << temperature << std::endl
-              << " gm1: " << gm1 << std::endl
-              << " New Energy: " << std::fmax(Globals::E_floor + kinetic_energy, cons(IEN, k, j, i) - cooled_energy) << std::endl
-              << " kinetic_energy: " << kinetic_energy << " ***" << std::endl;
-  }
-  cons(IEN, k, j, i) = std::fmax(Globals::E_floor + kinetic_energy, cons(IEN, k, j, i) - cooled_energy);
+  // if(Globals::log_on > 0 && Globals::E_floor + kinetic_energy > cons(IEN, k, j, i) - primitive_cooled_energy 
+  //                        && rad < Globals::log_up_to_redius){
+  //    std::cout<< "*** Energy:" << cons(IEN, k, j, i)<< std::endl 
+  //             << " Cooled energy:" << primitive_cooled_energy << std::endl
+  //             << " Radoius: " << rad << " kpc" <<std::endl
+  //             << " Time: " << time <<  std::endl
+  //             << " Temperature: " << temperature << std::endl
+  //             << " gm1: " << gm1 << std::endl
+  //             << " New Energy: " << std::fmax(Globals::E_floor + kinetic_energy, cons(IEN, k, j, i) - primitive_cooled_energy) << std::endl
+  //             << " kinetic_energy: " << kinetic_energy << " ***" << std::endl;
+  // }
+  // cons(IEN, k, j, i) = std::fmax(Globals::E_floor + kinetic_energy, cons(IEN, k, j, i) - primitive_cooled_energy);
+  cons(IEN, k, j, i) = std::fmax(Globals::E_floor + conservative_kinetic_energy, pressure/gm1 + primative_kinetic_energy - primitive_cooled_energy);
+
 }
 void TempCondition(Mesh* mesh){
   if (mesh->dt < pow(10,-8)){
@@ -107,7 +116,6 @@ void SpinSourceFunction(MeshBlock *pmb, const Real time, const Real dt,
         Real den = prim(IDN, k, j, i);
         Real pressure = prim(IEN, k, j, i);
         Real rad = std::sqrt(SQR(x - Globals::x0) + SQR(y - Globals::y0) + SQR(z - Globals::z0));
-        Real momnetum_squared = SQR(prim(IM1,k,j,i)) + SQR(prim(IM2,k,j,i)) + SQR(prim(IM3,k,j,i));
         if (Globals::add_grav){
           Grav(pmb, dt, prim, cons, G, rad, den, x, y, z, k, j, i);
         }
@@ -115,7 +123,7 @@ void SpinSourceFunction(MeshBlock *pmb, const Real time, const Real dt,
           TempCondition(pmb->pmy_mesh);
         }
         if (Globals::cooling_param){
-          Cooling(cons, dt, k, j, i, den, pressure, rad, time, pmb, momnetum_squared);
+          Cooling(cons, prim, dt, k, j, i, rad, time, pmb);
         }
       }
     }
