@@ -64,7 +64,7 @@ void Cooling(AthenaArray<Real> &cons, const AthenaArray<Real> &prim, const Real 
   Real gm1 = gamma - 1.0;
   Real primative_momnetum_squared = SQR(prim(IM1,k,j,i)) + SQR(prim(IM2,k,j,i)) + SQR(prim(IM3,k,j,i));
   Real primative_kinetic_energy = 0.5*primative_momnetum_squared/prim_den;
-  if (rad < 100 && time > 0.95) {
+  if (rad < 100 && time > 1.0 && (cons(IEN, k, j, i) < 10 || cons(IEN, k, j, i) >1000)) {
     std::cout << "***conservative_energy: "<< cons(IEN, k, j, i) <<  std::endl;
     std::cout << "***radius: "<< rad << "***" << std::endl;
     std::cout << "***time: "<< time << "***" << std::endl;
