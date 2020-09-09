@@ -74,6 +74,7 @@ void Cooling(AthenaArray<Real> &cons, const AthenaArray<Real> &prim, const Real 
     std::cout << "***radius: "<< rad <<  std::endl;
     std::cout << "***primitive_cooled_energy: "<< primitive_cooled_energy <<  std::endl;
     std::cout << "***cons_IEN: "<< cons(IEN, k, j, i) <<  std::endl;
+    std::cout << "***conservative_kinetic_energy: "<< conservative_kinetic_energy <<  std::endl;
   }
   // cons(IEN, k, j, i) = std::fmax(Globals::E_floor + primative_kinetic_energy, pressure/gm1 + primative_kinetic_energy - primitive_cooled_energy);
   cons(IEN, k, j, i) = std::fmax(conservative_kinetic_energy, cons(IEN, k, j, i) - primitive_cooled_energy);
