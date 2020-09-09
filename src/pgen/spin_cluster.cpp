@@ -69,15 +69,15 @@ void Cooling(AthenaArray<Real> &cons, const AthenaArray<Real> &prim, const Real 
   Real conservative_momnetum_squared = SQR(cons(IM1,k,j,i)) + SQR(cons(IM2,k,j,i)) + SQR(cons(IM3,k,j,i));
   Real conservative_kinetic_energy = 0.5*conservative_momnetum_squared/cons_den; 
   cons(IEN, k, j, i) = std::fmax(Globals::E_floor + primative_kinetic_energy, pressure/gm1 + primative_kinetic_energy - primitive_cooled_energy);
-  
-     std::cout<< "*** cons_k_Energy:" << conservative_kinetic_energy<< std::endl 
-              << " prim_k_Energy:" << primative_kinetic_energy << std::endl
-              << " conservative_momnetum_squared: " << conservative_momnetum_squared << std::endl
-              << " primative_momnetum_squared: " << primative_momnetum_squared << std::endl
-              << " cons_IDN: " << cons(IDN, k, j, i) << std::endl
-              << " prim_IDN:" << prim(IDN, k, j, i) << std::endl
-              << " cons_IEN: " << cons(IEN, k, j, i) << std::endl
-              << " prim_IEN: " << prim(IEN, k, j, i) << " ***" << std::endl;
+
+    //  std::cout<< "*** cons_k_Energy:" << conservative_kinetic_energy<< std::endl 
+    //           << " prim_k_Energy:" << primative_kinetic_energy << std::endl
+    //           << " conservative_momnetum_squared: " << conservative_momnetum_squared << std::endl
+    //           << " primative_momnetum_squared: " << primative_momnetum_squared << std::endl
+    //           << " cons_IDN: " << cons(IDN, k, j, i) << std::endl
+    //           << " prim_IDN:" << prim(IDN, k, j, i) << std::endl
+    //           << " cons_IEN: " << cons(IEN, k, j, i) << std::endl
+    //           << " prim_IEN: " << prim(IEN, k, j, i) << " ***" << std::endl;
  
 
   // Real temperature = 72.8 * pressure / den;
