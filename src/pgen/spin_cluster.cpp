@@ -70,7 +70,7 @@ void Cooling(AthenaArray<Real> &cons, const AthenaArray<Real> &prim, const Real 
   Real conservative_momnetum_squared = SQR(cons(IM1,k,j,i)) + SQR(cons(IM2,k,j,i)) + SQR(cons(IM3,k,j,i));
   Real conservative_kinetic_energy = 0.5*conservative_momnetum_squared/cons_rho;
 
-  if (Globals::E_floor + conservative_kinetic_energy > pressure/gm1 + primative_kinetic_energy - primitive_cooled_energy) {
+  if (Globals::E_floor + primative_kinetic_energy > pressure/gm1 + primative_kinetic_energy - primitive_cooled_energy) {
     std::cout << "***pressure: "<< pressure   
     << " ***radius: "<< rad <<  
     " ***primitive_cooled_energy: "<< primitive_cooled_energy <<  
