@@ -69,7 +69,8 @@ void Cooling(AthenaArray<Real> &cons, const AthenaArray<Real> &prim, const Real 
     std::cout << "***total primative energy: "<< pressure/gm1 + primative_kinetic_energy << "***" << std::endl;
   }
   // cons(IEN, k, j, i) = std::fmax(Globals::E_floor + primative_kinetic_energy, pressure/gm1 + primative_kinetic_energy - primitive_cooled_energy);
-  cons(IEN, k, j, i) = std::fmax(Globals::E_floor + primative_kinetic_energy, cons(IEN, k, j, i) - primitive_cooled_energy);
+  // cons(IEN, k, j, i) = std::fmax(Globals::E_floor + primative_kinetic_energy, cons(IEN, k, j, i) - primitive_cooled_energy);
+  cons(IEN, k, j, i) -= primitive_cooled_energy;
 
   // Real cons_den = cons(IDN, k, j, i);
   // Real conservative_momnetum_squared = SQR(cons(IM1,k,j,i)) + SQR(cons(IM2,k,j,i)) + SQR(cons(IM3,k,j,i));
