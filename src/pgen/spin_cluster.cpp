@@ -69,14 +69,16 @@ void Cooling(AthenaArray<Real> &cons, const AthenaArray<Real> &prim, const Real 
   Real conservative_momnetum_squared = SQR(cons(IM1,k,j,i)) + SQR(cons(IM2,k,j,i)) + SQR(cons(IM3,k,j,i));
   Real conservative_kinetic_energy = 0.5*conservative_momnetum_squared/cons_den; 
 
-  if (rad < 100 && time > 0.9 && cons(IEN, k, j, i) >1000) {
+  if (rad < 100 && time > 0.9) {
     std::cout << "***pressure: "<< pressure <<  std::endl;
-    std::cout << "***radus: "<< rad <<  std::endl;
+    std::cout << "***radius: "<< rad <<  std::endl;
+    std::cout << "***cons_IEN: "<< cons(IEN, k, j, i) <<  std::endl;
   }
   // cons(IEN, k, j, i) = std::fmax(Globals::E_floor + primative_kinetic_energy, pressure/gm1 + primative_kinetic_energy - primitive_cooled_energy);
   // cons(IEN, k, j, i) = std::fmax(Globals::E_floor + primative_kinetic_energy, cons(IEN, k, j, i) - primitive_cooled_energy);
-  // if (pressure > 1)
-  cons(IEN, k, j, i) -= primitive_cooled_energy;
+  if (pressure > 1) {
+    cons(IEN, k, j, i) -= primitive_cooled_energy;
+  }
 
 
     //  std::cout<< "*** cons_k_Energy:" << conservative_kinetic_energy<< std::endl 
