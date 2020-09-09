@@ -64,11 +64,12 @@ void Cooling(AthenaArray<Real> &cons, const AthenaArray<Real> &prim, const Real 
   Real gm1 = gamma - 1.0;
   Real primative_momnetum_squared = SQR(prim(IM1,k,j,i)) + SQR(prim(IM2,k,j,i)) + SQR(prim(IM3,k,j,i));
   Real primative_kinetic_energy = 0.5*primative_momnetum_squared/prim_den;
+  std::cout << "***my_ rank: "<< Globals::my_rank << "***" << std::endl;
+  cons(IEN, k, j, i) = std::fmax(Globals::E_floor + primative_kinetic_energy, pressure/gm1 + primative_kinetic_energy - primitive_cooled_energy);
 
   // Real cons_den = cons(IDN, k, j, i);
   // Real conservative_momnetum_squared = SQR(cons(IM1,k,j,i)) + SQR(cons(IM2,k,j,i)) + SQR(cons(IM3,k,j,i));
   // Real conservative_kinetic_energy = 0.5*conservative_momnetum_squared/cons_den; 
-  cons(IEN, k, j, i) = std::fmax(Globals::E_floor + primative_kinetic_energy, pressure/gm1 + primative_kinetic_energy - primitive_cooled_energy);
 
     //  std::cout<< "*** cons_k_Energy:" << conservative_kinetic_energy<< std::endl 
     //           << " prim_k_Energy:" << primative_kinetic_energy << std::endl
@@ -142,7 +143,6 @@ void SpinSourceFunction(MeshBlock *pmb, const Real time, const Real dt,
 
 void Mesh::InitUserMeshData(ParameterInput *pin)
 {
-  log_info(pin, "before adding source function");
   EnrollUserExplicitSourceFunction(SpinSourceFunction);
 }
 
