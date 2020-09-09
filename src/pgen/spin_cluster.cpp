@@ -54,20 +54,21 @@ void Grav(MeshBlock *pmb, const Real dt, const AthenaArray<Real> &prim,
 
 void Cooling(AthenaArray<Real> &cons, const AthenaArray<Real> &prim, const Real dt, Real k,Real j,Real i,
              Real rad, Real time,MeshBlock *pmb){
-  Real prim_den = prim(IDN, k, j, i);
-  Real pressure = prim(IEN, k, j, i);
-  Real primitive_cooled_energy = 2.52 * pow(10.0, 7.0) * pow(prim_den, 1.5) * pow(pressure, 0.5) * dt * Globals::cooling_param;
+  // Momentum and energy are desities.
+  Real prim_rho = prim(IDN, k, j, i); // Primitive mass density
+  Real pressure = prim(IPR, k, j, i); // Primitive pressure density
+  Real primitive_cooled_energy = 2.52 * pow(10.0, 7.0) * pow(prim_rho, 1.5) * pow(pressure, 0.5) * dt * Globals::cooling_param;
   if(rad <= Globals::no_cooling_radius || rad >= 100.0) {
     return;
   }
   Real gamma = pmb->peos->GetGamma();
   Real gm1 = gamma - 1.0;
-  Real primative_momnetum_squared = SQR(prim(IM1,k,j,i)) + SQR(prim(IM2,k,j,i)) + SQR(prim(IM3,k,j,i));
-  Real primative_kinetic_energy = 0.5*primative_momnetum_squared/prim_den;
+  Real primative_velocity_squared = (SQR(prim(IVX,k,j,i)) + SQR(prim(IVY,k,j,i)) + SQR(prim(IVZ,k,j,i)));
+  Real primative_kinetic_energy = 0.5*prim_rho*primative_velocity_squared;
 
-  Real cons_den = cons(IDN, k, j, i);
+  Real cons_rho = cons(IDN, k, j, i);
   Real conservative_momnetum_squared = SQR(cons(IM1,k,j,i)) + SQR(cons(IM2,k,j,i)) + SQR(cons(IM3,k,j,i));
-  Real conservative_kinetic_energy = 0.5*conservative_momnetum_squared/cons_den; 
+  Real conservative_kinetic_energy = 0.5*conservative_momnetum_squared/cons_rho;
 
   if (conservative_kinetic_energy > cons(IEN, k, j, i) - primitive_cooled_energy) {
     std::cout << "***pressure: "<< pressure <<  std::endl;
@@ -76,21 +77,22 @@ void Cooling(AthenaArray<Real> &cons, const AthenaArray<Real> &prim, const Real 
     std::cout << "***cons_IEN: "<< cons(IEN, k, j, i) <<  std::endl;
     std::cout << "***conservative_kinetic_energy: "<< conservative_kinetic_energy <<  std::endl;
   }
+  // cons(IEN, k, j, i) = std::fmax(Globals::E_floor + conservative_kinetic_energy, cons(IEN, k, j, i) - primitive_cooled_energy);
+  cons(IEN, k, j, i) = std::fmax(Globals::E_floor + conservative_kinetic_energy, pressure/gm1 + primative_kinetic_energy - primitive_cooled_energy);
+  
   // cons(IEN, k, j, i) = std::fmax(Globals::E_floor + primative_kinetic_energy, pressure/gm1 + primative_kinetic_energy - primitive_cooled_energy);
-  cons(IEN, k, j, i) = std::fmax(conservative_kinetic_energy, cons(IEN, k, j, i) - primitive_cooled_energy);
+  
+  
   // cons(IEN, k, j, i) -= primitive_cooled_energy;
-
-
-    //  std::cout<< "*** cons_k_Energy:" << conservative_kinetic_energy<< std::endl 
-    //           << " prim_k_Energy:" << primative_kinetic_energy << std::endl
-    //           << " conservative_momnetum_squared: " << conservative_momnetum_squared << std::endl
-    //           << " primative_momnetum_squared: " << primative_momnetum_squared << std::endl
-    //           << " cons_IDN: " << cons(IDN, k, j, i) << std::endl
-    //           << " prim_IDN:" << prim(IDN, k, j, i) << std::endl
-    //           << " cons_IEN: " << cons(IEN, k, j, i) << std::endl
-    //           << " prim_IEN: " << prim(IEN, k, j, i) << " ***" << std::endl;
+  //  std::cout<< "*** cons_k_Energy:" << conservative_kinetic_energy<< std::endl 
+  //           << " prim_k_Energy:" << primative_kinetic_energy << std::endl
+  //           << " conservative_momnetum_squared: " << conservative_momnetum_squared << std::endl
+  //           << " primative_momnetum_squared: " << primative_momnetum_squared << std::endl
+  //           << " cons_IDN: " << cons(IDN, k, j, i) << std::endl
+  //           << " prim_IDN:" << prim(IDN, k, j, i) << std::endl
+  //           << " cons_IEN: " << cons(IEN, k, j, i) << std::endl
+  //           << " prim_IEN: " << prim(IEN, k, j, i) << " ***" << std::endl;
  
-
   // Real temperature = 72.8 * pressure / den;
   // Real kinetic_energy = cons(IEN, k, j, i) - pressure / gm1;
   // if(Globals::log_on > 0 && Globals::E_floor + kinetic_energy > cons(IEN, k, j, i) - primitive_cooled_energy 
