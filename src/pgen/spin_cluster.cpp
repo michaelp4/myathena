@@ -70,17 +70,17 @@ void Cooling(AthenaArray<Real> &cons, const AthenaArray<Real> &prim, const Real 
   Real conservative_momnetum_squared = SQR(cons(IM1,k,j,i)) + SQR(cons(IM2,k,j,i)) + SQR(cons(IM3,k,j,i));
   Real conservative_kinetic_energy = 0.5*conservative_momnetum_squared/cons_rho;
 
-  if (Globals::E_floor + conservative_kinetic_energy > pressure/gm1 + primative_kinetic_energy - primitive_cooled_energy) {
-    std::cout << "***pressure: "<< pressure <<
-    " prim_rho: "<< prim_rho <<  
-    " cons_rho: "<< cons_rho <<  
-    " rad: "<< rad <<  
-    " prim_cooled_energy: "<< primitive_cooled_energy <<  
-    " cons_IEN: "<< cons(IEN, k, j, i) <<  
-    " cons_kin_energy: "<< conservative_kinetic_energy <<  
-    " prim_kin_energy: "<< primative_kinetic_energy <<  
-    " time: "<< time << std::endl;
-  }
+  // if (Globals::E_floor + conservative_kinetic_energy > pressure/gm1 + primative_kinetic_energy - primitive_cooled_energy) {
+  //   std::cout << "***pressure: "<< pressure <<
+  //   " prim_rho: "<< prim_rho <<  
+  //   " cons_rho: "<< cons_rho <<  
+  //   " rad: "<< rad <<  
+  //   " prim_cooled_energy: "<< primitive_cooled_energy <<  
+  //   " cons_IEN: "<< cons(IEN, k, j, i) <<  
+  //   " cons_kin_energy: "<< conservative_kinetic_energy <<  
+  //   " prim_kin_energy: "<< primative_kinetic_energy <<  
+  //   " time: "<< time << std::endl;
+  // }
   // cons(IEN, k, j, i) = std::fmax(Globals::E_floor + conservative_kinetic_energy, cons(IEN, k, j, i) - primitive_cooled_energy);
   // cons(IEN, k, j, i) = std::fmax(Globals::E_floor + conservative_kinetic_energy, pressure/gm1 + primative_kinetic_energy - primitive_cooled_energy);
   
