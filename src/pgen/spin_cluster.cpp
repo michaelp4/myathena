@@ -58,7 +58,7 @@ void Cooling(AthenaArray<Real> &cons, const AthenaArray<Real> &prim, const Real 
   Real prim_rho = prim(IDN, k, j, i); // Primitive mass density
   Real pressure = prim(IPR, k, j, i); // Primitive pressure density
   Real primitive_cooled_energy = 2.52 * pow(10.0, 7.0) * pow(prim_rho, 1.5) * pow(pressure, 0.5) * dt * Globals::cooling_param;
-  if(rad <= Globals::no_cooling_radius || rad >= 100.0) {
+  if(rad <= Globals::no_cooling_radius_under || rad >= Globals::no_cooling_radius_above) {
     return;
   }
   Real gamma = pmb->peos->GetGamma();
@@ -70,22 +70,22 @@ void Cooling(AthenaArray<Real> &cons, const AthenaArray<Real> &prim, const Real 
   Real conservative_momnetum_squared = SQR(cons(IM1,k,j,i)) + SQR(cons(IM2,k,j,i)) + SQR(cons(IM3,k,j,i));
   Real conservative_kinetic_energy = 0.5*conservative_momnetum_squared/cons_rho;
 
-  // if (Globals::E_floor + conservative_kinetic_energy > pressure/gm1 + primative_kinetic_energy - primitive_cooled_energy) {
-  //   std::cout << "***pressure: "<< pressure <<
-  //   " prim_rho: "<< prim_rho <<  
-  //   " cons_rho: "<< cons_rho <<  
-  //   " rad: "<< rad <<  
-  //   " prim_cooled_energy: "<< primitive_cooled_energy <<  
-  //   " cons_IEN: "<< cons(IEN, k, j, i) <<  
-  //   " cons_kin_energy: "<< conservative_kinetic_energy <<  
-  //   " prim_kin_energy: "<< primative_kinetic_energy <<  
-  //   " time: "<< time << std::endl;
-  // }
+  if (Globals::log_on > 0 && 
+  Globals::E_floor + conservative_kinetic_energy > pressure/gm1 + primative_kinetic_energy - primitive_cooled_energy) {
+    std::cout << "***pressure: "<< pressure <<
+    " prim_rho: "<< prim_rho <<  
+    " cons_rho: "<< cons_rho <<  
+    " rad: "<< rad <<  
+    " prim_cooled_energy: "<< primitive_cooled_energy <<  
+    " cons_IEN: "<< cons(IEN, k, j, i) <<  
+    " cons_kin_energy: "<< conservative_kinetic_energy <<  
+    " prim_kin_energy: "<< primative_kinetic_energy <<  
+    " time: "<< time << std::endl;
+  }
+  cons(IEN, k, j, i) = std::fmax(Globals::E_floor + conservative_kinetic_energy, pressure/gm1 + primative_kinetic_energy - primitive_cooled_energy);
+
   // cons(IEN, k, j, i) = std::fmax(Globals::E_floor + conservative_kinetic_energy, cons(IEN, k, j, i) - primitive_cooled_energy);
   // cons(IEN, k, j, i) = std::fmax(Globals::E_floor + conservative_kinetic_energy, pressure/gm1 + primative_kinetic_energy - primitive_cooled_energy);
-  
-  cons(IEN, k, j, i) = std::fmax(Globals::E_floor + conservative_kinetic_energy, pressure/gm1 + primative_kinetic_energy - primitive_cooled_energy);
-  
   
   // cons(IEN, k, j, i) -= primitive_cooled_energy;
   //  std::cout<< "*** cons_k_Energy:" << conservative_kinetic_energy<< std::endl 
@@ -99,8 +99,7 @@ void Cooling(AthenaArray<Real> &cons, const AthenaArray<Real> &prim, const Real 
  
   // Real temperature = 72.8 * pressure / den;
   // Real kinetic_energy = cons(IEN, k, j, i) - pressure / gm1;
-  // if(Globals::log_on > 0 && Globals::E_floor + kinetic_energy > cons(IEN, k, j, i) - primitive_cooled_energy 
-  //                        && rad < Globals::log_up_to_redius){
+  // if(Globals::log_on > 0 && Globals::E_floor + kinetic_energy > cons(IEN, k, j, i) - primitive_cooled_energy){
   //    std::cout<< "*** Energy:" << cons(IEN, k, j, i)<< std::endl 
   //             << " Cooled energy:" << primitive_cooled_energy << std::endl
   //             << " Radoius: " << rad << " kpc" <<std::endl
@@ -178,7 +177,8 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin)
   Globals::x0   = pin->GetOrAddReal("problem","x1_0",0.0);
   Globals::y0   = pin->GetOrAddReal("problem","x2_0",0.0);
   Globals::z0   = pin->GetOrAddReal("problem","x3_0",0.0);
-  Globals::no_cooling_radius = pin->GetOrAddReal("problem", "no_cooling_radius", 0.0);
+  Globals::no_cooling_radius_under = pin->GetOrAddReal("problem", "no_cooling_radius_under", 0.0);
+  Globals::no_cooling_radius_above = pin->GetOrAddReal("problem", "no_cooling_radius_above", 2000.0);
   Globals::E_floor = pin->GetOrAddReal("problem", "e_floor", pow(10.0,-5.0));
   Globals::log_on = pin->GetOrAddReal("problem", "log_on", 0.0);
   Globals::log_up_to_redius = pin->GetOrAddReal("problem", "log_up_to_redius", 2000.0);
