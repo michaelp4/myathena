@@ -26,17 +26,11 @@
 #include "../mesh/mesh.hpp"
 #include "../parameter_input.hpp"
 
-void log_info(ParameterInput *pin, std::string msg)
-{
-  if (pin->GetOrAddBoolean("problem", "log_on", true))
-    std::cout << std::endl
-              << "*** " + msg + " ***" << std::endl;
-}
-
 void Grav(MeshBlock *pmb, const Real dt, const AthenaArray<Real> &prim,
           AthenaArray<Real> &cons, Real G,
-          Real rad,Real den,Real x,Real y,Real z,Real k,Real j,Real i){
+          Real rad,Real x,Real y,Real z,Real k,Real j,Real i){
   Real dPhi = (G * Globals::tot_mass) / pow(rad + Globals::scale_length, 2.0);
+  Real den = prim(IDN, k, j, i);
   Real force = -dPhi * den;
   Real dMomentum = force * dt;
   Real dIM1 = dMomentum * x / rad;
@@ -82,34 +76,8 @@ void Cooling(AthenaArray<Real> &cons, const AthenaArray<Real> &prim, const Real 
     " prim_kin_energy: "<< primative_kinetic_energy <<  
     " time: "<< time << std::endl;
   }
-  cons(IEN, k, j, i) = std::fmax(Globals::E_floor + conservative_kinetic_energy, pressure/gm1 + primative_kinetic_energy - primitive_cooled_energy);
-
-  // cons(IEN, k, j, i) = std::fmax(Globals::E_floor + conservative_kinetic_energy, cons(IEN, k, j, i) - primitive_cooled_energy);
-  // cons(IEN, k, j, i) = std::fmax(Globals::E_floor + conservative_kinetic_energy, pressure/gm1 + primative_kinetic_energy - primitive_cooled_energy);
   
-  // cons(IEN, k, j, i) -= primitive_cooled_energy;
-  //  std::cout<< "*** cons_k_Energy:" << conservative_kinetic_energy<< std::endl 
-  //           << " prim_k_Energy:" << primative_kinetic_energy << std::endl
-  //           << " conservative_momnetum_squared: " << conservative_momnetum_squared << std::endl
-  //           << " primative_momnetum_squared: " << primative_momnetum_squared << std::endl
-  //           << " cons_IDN: " << cons(IDN, k, j, i) << std::endl
-  //           << " prim_IDN:" << prim(IDN, k, j, i) << std::endl
-  //           << " cons_IEN: " << cons(IEN, k, j, i) << std::endl
-  //           << " prim_IEN: " << prim(IEN, k, j, i) << " ***" << std::endl;
- 
-  // Real temperature = 72.8 * pressure / den;
-  // Real kinetic_energy = cons(IEN, k, j, i) - pressure / gm1;
-  // if(Globals::log_on > 0 && Globals::E_floor + kinetic_energy > cons(IEN, k, j, i) - primitive_cooled_energy){
-  //    std::cout<< "*** Energy:" << cons(IEN, k, j, i)<< std::endl 
-  //             << " Cooled energy:" << primitive_cooled_energy << std::endl
-  //             << " Radoius: " << rad << " kpc" <<std::endl
-  //             << " Time: " << time <<  std::endl
-  //             << " Temperature: " << temperature << std::endl
-  //             << " gm1: " << gm1 << std::endl
-  //             << " New Energy: " << std::fmax(Globals::E_floor + kinetic_energy, cons(IEN, k, j, i) - primitive_cooled_energy) << std::endl
-  //             << " kinetic_energy: " << kinetic_energy << " ***" << std::endl;
-  // }
-  // cons(IEN, k, j, i) = std::fmax(Globals::E_floor + kinetic_energy, cons(IEN, k, j, i) - primitive_cooled_energy);
+  cons(IEN, k, j, i) = std::fmax(Globals::E_floor + conservative_kinetic_energy, pressure/gm1 + primative_kinetic_energy - primitive_cooled_energy);
 }
 void TempCondition(Mesh* mesh){
   if (mesh->dt < pow(10,-8)){
@@ -139,11 +107,9 @@ void SpinSourceFunction(MeshBlock *pmb, const Real time, const Real dt,
         Real x = pmb->pcoord->x1v(i);
         Real y = pmb->pcoord->x2v(j);
         Real z = pmb->pcoord->x3v(k);
-        Real den = prim(IDN, k, j, i);
-        Real pressure = prim(IEN, k, j, i);
         Real rad = std::sqrt(SQR(x - Globals::x0) + SQR(y - Globals::y0) + SQR(z - Globals::z0));
         if (Globals::add_grav){
-          Grav(pmb, dt, prim, cons, G, rad, den, x, y, z, k, j, i);
+          Grav(pmb, dt, prim, cons, G, rad, x, y, z, k, j, i);
         }
         if (Globals::add_temerature_condition){
           TempCondition(pmb->pmy_mesh);
@@ -181,7 +147,6 @@ void MeshBlock::ProblemGenerator(ParameterInput *pin)
   Globals::no_cooling_radius_above = pin->GetOrAddReal("problem", "no_cooling_radius_above", 2000.0);
   Globals::E_floor = pin->GetOrAddReal("problem", "e_floor", pow(10.0,-5.0));
   Globals::log_on = pin->GetOrAddReal("problem", "log_on", 0.0);
-  Globals::log_up_to_redius = pin->GetOrAddReal("problem", "log_up_to_redius", 2000.0);
   Globals::add_grav = pin->GetOrAddReal("problem", "add_grav", false);
   Globals::add_temerature_condition = pin->GetOrAddReal("problem", "add_temperature_condition", false);
   Globals::cooling_param = pin->GetOrAddReal("problem", "cooling_param", false);
