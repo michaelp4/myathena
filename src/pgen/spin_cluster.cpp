@@ -63,8 +63,8 @@ void Cooling(AthenaArray<Real> &cons, const AthenaArray<Real> &prim, const Real 
   Real cons_rho = cons(IDN, k, j, i);
   Real conservative_momnetum_squared = SQR(cons(IM1,k,j,i)) + SQR(cons(IM2,k,j,i)) + SQR(cons(IM3,k,j,i));
   Real conservative_kinetic_energy = 0.5*conservative_momnetum_squared/cons_rho;
-
-  if (Globals::log_on > 0 && 
+  bool log = (Globals::cooling_param == 0.1 && (time > 0.055 && time < 0.06) ) || ((Globals::cooling_param == 1 && (time > 0.015 && time < 0.02)) ;
+  if (Globals::log_on > 0 && log &&
   Globals::E_floor + conservative_kinetic_energy > pressure/gm1 + primative_kinetic_energy - primitive_cooled_energy) {
     std::cout << "***pressure: "<< pressure <<
     " prim_rho: "<< prim_rho <<  
@@ -74,6 +74,7 @@ void Cooling(AthenaArray<Real> &cons, const AthenaArray<Real> &prim, const Real 
     " cons_IEN: "<< cons(IEN, k, j, i) <<  
     " cons_kin_energy: "<< conservative_kinetic_energy <<  
     " prim_kin_energy: "<< primative_kinetic_energy <<  
+    " prim_temperature: "<< 72.8 * pressure/prim_rho <<  
     " time: "<< time << std::endl;
   }
   
@@ -85,12 +86,6 @@ void TempCondition(Mesh* mesh){
   }
 }
 
-void LogTemp(Real* numerator, Real* denominator, Real den, 
-                   Real energy){
-  Real temperature = 2.0 / 3.0 * energy / den;
-  *numerator += temperature * den;
-  *denominator += den;
-}
 void SpinSourceFunction(MeshBlock *pmb, const Real time, const Real dt,
           const AthenaArray<Real> &prim, const AthenaArray<Real> &bcc,
           AthenaArray<Real> &cons){
