@@ -79,7 +79,7 @@ void Cooling(AthenaArray<Real> &cons, const AthenaArray<Real> &prim, const Real 
   }
   
   cons(IEN, k, j, i) = std::fmax(Globals::E_floor + conservative_kinetic_energy, 
-  pressure/gm1 + primative_kinetic_energy / (1 + primitive_cooled_energy));
+  (pressure/gm1 + primative_kinetic_energy) / (1 + primitive_cooled_energy));
 }
 void TempCondition(Mesh* mesh){
   if (mesh->dt < pow(10,-8)){
