@@ -20,8 +20,6 @@
 #include "../field/field.hpp"              // FaceField
 #include "../mesh/mesh.hpp"                // MeshBlock
 
-#include "../globals.hpp"
-
 //----------------------------------------------------------------------------------------
 // Constructor
 // Inputs:
@@ -222,10 +220,7 @@ void EquationOfState::ConservedToPrimitive(AthenaArray<Real> &cons,
 void EquationOfState::PrimitiveToConserved(const AthenaArray<Real> &prim,
      const AthenaArray<Real> &bb_cc, AthenaArray<Real> &cons, Coordinates *pco, int il,
      int iu, int jl, int ju, int kl, int ku) {
-  if(Globals::log_on > 0) {
-    Globals::counter=Globals::counter+1.0;
-    std::cout << "in PrimitiveToConserved function inadiabatic_hydro_sr, counter: " <<Globals::counter++<< std::endl;
-  }
+
   // Calculate reduced ratio of specific heats
   Real gamma_prime = gamma_/(gamma_-1.0);
 

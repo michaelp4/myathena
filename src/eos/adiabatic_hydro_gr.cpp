@@ -21,8 +21,6 @@
 #include "../field/field.hpp"              // FaceField
 #include "../mesh/mesh.hpp"                // MeshBlock
 
-#include "../globals.hpp"
-
 
 // Declarations
 static void PrimitiveToConservedSingle(const AthenaArray<Real> &prim, Real gamma_adi,
@@ -89,10 +87,6 @@ void EquationOfState::ConservedToPrimitive(AthenaArray<Real> &cons,
     const AthenaArray<Real> &prim_old, const FaceField &bb, AthenaArray<Real> &prim,
     AthenaArray<Real> &bb_cc, Coordinates *pco, int il, int iu, int jl, int ju, int kl,
     int ku) {
-  if(Globals::log_on > 0) {
-    Globals::counter=Globals::counter+1.0;
-    std::cout << "in ConservedToPrimitiveNormal function adiabtic_hydro_gr, counter: " <<Globals::counter<< std::endl;
-  }
   // Parameters
   const Real max_wgas_rel = 1.0e8;
   const Real initial_guess_multiplier = 10.0;
@@ -279,10 +273,6 @@ void EquationOfState::ConservedToPrimitive(AthenaArray<Real> &cons,
 void EquationOfState::PrimitiveToConserved(const AthenaArray<Real> &prim,
      const AthenaArray<Real> &bb_cc, AthenaArray<Real> &cons, Coordinates *pco, int il,
      int iu, int jl, int ju, int kl, int ku) {
-  if(Globals::log_on > 0) {
-    Globals::counter=Globals::counter+1.0;
-    std::cout << "in PrimitiveToConserved function inadiabatic_hydro_gr, counter: " <<Globals::counter++<< std::endl;
-  }
   for (int k=kl; k<=ku; ++k) {
     for (int j=jl; j<=ju; ++j) {
       pco->CellMetric(k, j, il, iu, g_, g_inv_);

@@ -18,8 +18,6 @@
 #include "../mesh/mesh.hpp"
 #include "../parameter_input.hpp"
 #include "../field/field.hpp"
-#include "../globals.hpp"
-
 
 // EquationOfState constructor
 
@@ -79,10 +77,6 @@ void EquationOfState::ConservedToPrimitive(AthenaArray<Real> &cons,
 void EquationOfState::PrimitiveToConserved(const AthenaArray<Real> &prim,
      const AthenaArray<Real> &bc, AthenaArray<Real> &cons, Coordinates *pco,
      int il, int iu, int jl, int ju, int kl, int ku) {
-  if(Globals::log_on > 0) {
-    Globals::counter=Globals::counter+1.0;
-    std::cout << "in PrimitiveToConserved function isothermal_hydro, counter: " <<Globals::counter++<< std::endl;
-  }
   Real igm1 = 1.0/(GetGamma() - 1.0);
 
   for (int k=kl; k<=ku; ++k) {

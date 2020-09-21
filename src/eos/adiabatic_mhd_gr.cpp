@@ -21,8 +21,6 @@
 #include "../field/field.hpp"              // FaceField
 #include "../mesh/mesh.hpp"                // MeshBlock
 
-#include "../globals.hpp"
-
 // Declarations
 static void CalculateNormalConserved(const AthenaArray<Real> &cons,
     const AthenaArray<Real> &bb, const AthenaArray<Real> &g, const AthenaArray<Real> &gi,
@@ -421,10 +419,7 @@ static bool ConservedToPrimitiveNormal(const AthenaArray<Real> &dd_vals,
     const AthenaArray<Real> &bb_vals, const AthenaArray<Real> &tt_vals, Real gamma_adi,
     Real pgas_old, int k, int j, int i, AthenaArray<Real> &prim, Real *p_gamma_lor,
     Real *p_pmag) {
-  if(Globals::log_on > 0) {
-      Globals::counter=Globals::counter+1.0;
-    std::cout << "in ConservedToPrimitiveNormal function adiabtic_mhd_gr, counter: " <<Globals::counter<< std::endl;
-  }
+
   // Parameters
   const int max_iterations = 10;
   const Real tol = 1.0e-12;
@@ -558,10 +553,6 @@ static bool ConservedToPrimitiveNormal(const AthenaArray<Real> &dd_vals,
 void EquationOfState::PrimitiveToConserved(const AthenaArray<Real> &prim,
      const AthenaArray<Real> &bb_cc, AthenaArray<Real> &cons, Coordinates *pco,
      int il, int iu, int jl, int ju, int kl, int ku) {
-  if(Globals::log_on > 0) {
-    Globals::counter=Globals::counter+1.0;
-    std::cout << "in PrimitiveToConserved function in adiabatic_mhd_gr, counter: " <<Globals::counter<< std::endl;
-  }
   for (int k=kl; k<=ku; ++k) {
     for (int j=jl; j<=ju; ++j) {
       pco->CellMetric(k, j, il, iu, g_, g_inv_);
