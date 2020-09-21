@@ -45,6 +45,11 @@ EquationOfState::~EquationOfState() {
 void EquationOfState::ConservedToPrimitive(AthenaArray<Real> &cons,
   const AthenaArray<Real> &prim_old, const FaceField &b, AthenaArray<Real> &prim,
   AthenaArray<Real> &bcc, Coordinates *pco, int il,int iu, int jl,int ju, int kl,int ku) {
+  if(Globals::log_on > 0) {
+    Globals::counter=Globals::counter+1.0;
+    std::cout << "in ConservedToPrimitive function in adiabatic_hydro, counter: " <<Globals::counter<< std::endl;
+  }
+
   Real gm1 = GetGamma() - 1.0;
 
   for (int k=kl; k<=ku; ++k) {
