@@ -18,6 +18,8 @@
 #include "../mesh/mesh.hpp"
 #include "../parameter_input.hpp"
 #include "../field/field.hpp"
+#include "../globals.hpp"
+
 
 // EquationOfState constructor
 

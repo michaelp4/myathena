@@ -20,6 +20,7 @@
 #include "../field/field.hpp"              // FaceField
 #include "../mesh/mesh.hpp"                // MeshBlock
 
+#include "../globals.hpp"
 
 //----------------------------------------------------------------------------------------
 // Constructor

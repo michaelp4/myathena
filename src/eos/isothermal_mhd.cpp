@@ -20,6 +20,8 @@
 #include "../field/field.hpp"
 #include "../coordinates/coordinates.hpp"
 
+#include "../globals.hpp"
+
 // EquationOfState constructor
 
 EquationOfState::EquationOfState(MeshBlock *pmb, ParameterInput *pin) {
