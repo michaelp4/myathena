@@ -26,7 +26,8 @@ namespace Globals {
   log_up_to_redius,
   add_grav,
   add_temerature_condition,
-  cooling_param;
+  cooling_param,
+  counter;
 }
 
 #endif // GLOBALS_HPP_
