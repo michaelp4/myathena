@@ -79,10 +79,10 @@ void Cooling(AthenaArray<Real> &cons, const AthenaArray<Real> &prim, const Real 
   //   " time: "<< time << std::endl;
   // }
   
-  if(Globals::log_on > 0) {
-    Globals::counter=Globals::counter+1.0;
-    std::cout << "in cooling function, counter: " <<Globals::counter<< std::endl;
-  }
+  // if(Globals::log_on > 0) {
+  //   Globals::counter=Globals::counter+1.0;
+  //   std::cout << "in cooling function, counter: " <<Globals::counter<< std::endl;
+  // }
 
   cons(IEN, k, j, i) = std::fmax(Globals::E_floor + conservative_kinetic_energy, 
   (pressure/gm1 + primative_kinetic_energy) / (1 + primitive_cooled_energy));
