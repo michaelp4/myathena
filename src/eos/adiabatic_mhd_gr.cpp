@@ -422,6 +422,7 @@ static bool ConservedToPrimitiveNormal(const AthenaArray<Real> &dd_vals,
     Real pgas_old, int k, int j, int i, AthenaArray<Real> &prim, Real *p_gamma_lor,
     Real *p_pmag) {
   if(Globals::log_on > 0) {
+      Globals::counter=Globals::counter+1.0;
     std::cout << "in ConservedToPrimitiveNormal function adiabtic_mhd_gr, counter: " <<Globals::counter<< std::endl;
   }
   // Parameters
@@ -558,6 +559,7 @@ void EquationOfState::PrimitiveToConserved(const AthenaArray<Real> &prim,
      const AthenaArray<Real> &bb_cc, AthenaArray<Real> &cons, Coordinates *pco,
      int il, int iu, int jl, int ju, int kl, int ku) {
   if(Globals::log_on > 0) {
+    Globals::counter=Globals::counter+1.0;
     std::cout << "in PrimitiveToConserved function in adiabatic_mhd_gr, counter: " <<Globals::counter<< std::endl;
   }
   for (int k=kl; k<=ku; ++k) {
