@@ -9,6 +9,8 @@
 // REFERENCE: Hernquist 1990.
 
 // C++ headers
+#include <cfloat>  // FLT_MIN
+
 #include <algorithm>
 #include <cmath>
 #include <sstream>
@@ -47,19 +49,53 @@ void Grav(MeshBlock *pmb, const Real dt, const AthenaArray<Real> &prim,
 
 
 void Cooling(AthenaArray<Real> &cons, const AthenaArray<Real> &prim, const Real dt, Real k,Real j,Real i,
-             Real rad, Real time,MeshBlock *pmb){
+             Real rad, Real time,MeshBlock *pmb,  ParameterInput *pin){
+    Real gamma = pmb->peos->GetGamma();
+    Real gm1 = gamma - 1.0;
+
+  // cons2prim 
+  
+  Real density_floor_  = pin->GetOrAddReal("hydro","dfloor", std::sqrt(1024*(FLT_MIN)));
+  Real pressure_floor_ = pin->GetOrAddReal("hydro","pfloor", std::sqrt(1024*(FLT_MIN)));
+  Real u_d  = cons(IDN,k,j,i);
+  Real u_m1 = cons(IM1,k,j,i);
+  Real u_m2 = cons(IM2,k,j,i);
+  Real u_m3 = cons(IM3,k,j,i);
+  Real u_e  = cons(IEN,k,j,i);
+
+  Real w_d  = prim(IDN,k,j,i);
+  Real w_vx = prim(IVX,k,j,i);
+  Real w_vy = prim(IVY,k,j,i);
+  Real w_vz = prim(IVZ,k,j,i);
+  Real w_p  = prim(IPR,k,j,i);
+
+  // apply density floor, without changing momentum or energy
+  u_d = (u_d > density_floor_) ?  u_d : density_floor_;
+  w_d = u_d;
+
+  Real di = 1.0/u_d;
+  w_vx = u_m1*di;
+  w_vy = u_m2*di;
+  w_vz = u_m3*di;
+
+  Real ke = 0.5*di*(SQR(u_m1) + SQR(u_m2) + SQR(u_m3));
+  w_p = gm1*(u_e - ke);
+
+  // apply pressure floor, correct total energy
+  u_e = (w_p > pressure_floor_) ?  u_e : ((pressure_floor_/gm1) + ke);
+  w_p = (w_p > pressure_floor_) ?  w_p : pressure_floor_;
+
+
   // Momentum and energy are desities.
-  Real prim_rho = prim(IDN, k, j, i); // Primitive mass density
-  Real pressure = prim(IPR, k, j, i); // Primitive pressure density
+  Real prim_rho = w_d;// prim(IDN, k, j, i); // Primitive mass density
+  Real pressure = w_p;//prim(IPR, k, j, i); // Primitive pressure density
   Real primitive_cooled_energy = 2.52 * pow(10.0, 7.0) * pow(prim_rho, 1.5) * 
                                         pow(pressure, 0.5) * dt * Globals::cooling_param;
   if(rad <= Globals::no_cooling_radius_under || rad >= Globals::no_cooling_radius_above) {
     return;
   }
-  Real gamma = pmb->peos->GetGamma();
-  Real gm1 = gamma - 1.0;
-  Real primative_velocity_squared = (SQR(prim(IVX,k,j,i)) + SQR(prim(IVY,k,j,i)) + SQR(prim(IVZ,k,j,i)));
-  Real primative_kinetic_energy = 0.5*prim_rho*primative_velocity_squared;
+  Real primative_velocity_squared = (SQR(w_vx) + SQR(w_vy) + SQR(w_vz));//(SQR(prim(IVX,k,j,i)) + SQR(prim(IVY,k,j,i)) + SQR(prim(IVZ,k,j,i)));
+  Real primative_kinetic_energy = ke;//0.5*prim_rho*primative_velocity_squared;
 
   Real cons_rho = cons(IDN, k, j, i);
   Real conservative_momnetum_squared = SQR(cons(IM1,k,j,i)) + SQR(cons(IM2,k,j,i)) + SQR(cons(IM3,k,j,i));
@@ -79,13 +115,8 @@ void Cooling(AthenaArray<Real> &cons, const AthenaArray<Real> &prim, const Real 
   //   " time: "<< time << std::endl;
   // }
   
-  if(Globals::log_on > 0 && Globals::my_rank==0) {
-    Globals::counter=Globals::counter+1.0;
-    std::cout << "in cooling function, counter: " <<Globals::counter<< std::endl;
-  }
-
   cons(IEN, k, j, i) = std::fmax(Globals::E_floor + conservative_kinetic_energy, 
-  (pressure/gm1 + primative_kinetic_energy) / (1 + primitive_cooled_energy));
+  pressure/gm1 + primative_kinetic_energy - primitive_cooled_energy);
 }
 void TempCondition(Mesh* mesh){
   if (mesh->dt < pow(10,-8)){
@@ -99,7 +130,7 @@ void SpinSourceFunction(MeshBlock *pmb, const Real time, const Real dt,
   // Setting the Gravitational constant
   Real G = 0.00430091 * pow(10.0, 7.0); // Units: pc (parsec) / solar mass * (km/s)^2
   ParameterInput *pin =pmb->phydro->pin;
-
+  
   for (int k = pmb->ks; k <= pmb->ke; k++)
   {
     for (int j = pmb->js; j <= pmb->je; j++)
@@ -117,7 +148,7 @@ void SpinSourceFunction(MeshBlock *pmb, const Real time, const Real dt,
           TempCondition(pmb->pmy_mesh);
         }
         if (Globals::cooling_param){
-          Cooling(cons, prim, dt, k, j, i, rad, time, pmb);
+          Cooling(cons, prim, dt, k, j, i, rad, time, pmb, pin);
         }
       }
     }
